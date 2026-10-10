@@ -3,47 +3,52 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My School System | School Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My School System | School Administrator</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#111c3a;--navy2:#1b2a52;--blue:#4169e1;--bg:#f3f6fc;--white:#fff;--muted:#748098}
+:root{--navy:#111c3a;--navy2:#1b2a52;--blue:#4169e1;--bg:#f3f6fc;--text:#202b45;--muted:#748098}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#202b45}
-header{height:66px;background:var(--navy);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{background:var(--navy);color:white;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 header h2{font-size:18px;margin:0}
-button{cursor:pointer;border:0;border-radius:7px;padding:10px 13px;font-weight:bold}
-.logout{background:#fff;color:var(--navy)}
-.layout{display:flex;min-height:calc(100vh - 66px)}
-aside{width:235px;background:var(--navy2);padding:16px 10px;color:white;flex-shrink:0}
-aside h4{margin:8px 12px 16px;color:#bdc9e8}
-.nav{display:block;width:100%;text-align:left;padding:12px;margin:3px 0;background:transparent;color:#e8edfa;border-radius:7px}
-.nav:hover,.nav.active{background:#4169e1;color:white}
-main{padding:23px;width:100%;min-width:0}
-.welcome{margin-bottom:20px}
-.welcome h1{margin:0 0 7px;font-size:25px}
-.welcome p{margin:0;color:var(--muted)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;margin:20px 0}
-.card,.panel{background:white;border-radius:12px;padding:19px;box-shadow:0 3px 15px #18264a0b}
+button{border:0;border-radius:7px;padding:10px 13px;cursor:pointer;font-weight:bold}
+button:disabled{opacity:.55;cursor:wait}
+.logout{background:white;color:var(--navy)}
+.layout{display:flex;min-height:calc(100vh - 60px)}
+aside{width:230px;background:var(--navy2);padding:15px 10px;flex-shrink:0}
+aside h4{color:#cbd5ee;padding:0 10px}
+.nav{display:block;width:100%;text-align:left;padding:12px;margin:3px 0;background:transparent;color:white}
+.nav:hover,.nav.active{background:var(--blue)}
+main{padding:22px;width:100%;min-width:0}
+h1{font-size:25px;margin:0 0 8px}
+.muted{color:var(--muted);line-height:1.5}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:14px;margin:20px 0}
+.card,.panel{background:white;border-radius:12px;padding:18px;box-shadow:0 3px 14px #18264a0b;margin-bottom:16px}
 .card small{color:var(--muted)}
-.card h2{margin:12px 0 0;font-size:25px}
-.panel h3{margin-top:0}
+.card h2{font-size:21px;margin-bottom:0}
+input,select{font:inherit;padding:11px;border:1px solid #d5dceb;border-radius:7px;width:100%;margin:5px 0 13px;background:white}
+label{font-size:14px;font-weight:bold}
+.primary{background:var(--blue);color:white}
+.danger{background:#b42318;color:white}
+.neutral{background:#e8edf7;color:var(--navy)}
 #message{white-space:pre-wrap;margin:12px 0}
 .error{color:#b42318}.success{color:#16713c}
-.info{color:var(--muted);line-height:1.6}
-table{width:100%;border-collapse:collapse}
-td,th{text-align:left;padding:12px;border-bottom:1px solid #e9edf5}
 .tablewrap{overflow-x:auto}
-.placeholder{padding:18px;border-radius:8px;background:#f5f7fc;line-height:1.7}
-.mobile-menu{display:none;background:#4169e1;color:white}
-@media(max-width:700px){
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:11px;border-bottom:1px solid #e9edf5;vertical-align:top}
+th{background:#f7f9fd}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.menuBtn{display:none;background:var(--blue);color:white}
+.badge{font-size:12px;font-weight:bold;background:#e8edf7;padding:5px 8px;border-radius:15px}
+@media(max-width:720px){
  .layout{display:block}
- aside{width:100%;display:none}
+ aside{display:none;width:100%}
  aside.open{display:block}
- main{padding:15px}
- .mobile-menu{display:inline-block}
+ main{padding:14px}
+ .menuBtn{display:inline-block}
+ h1{font-size:21px}
  header h2{font-size:15px}
- .welcome h1{font-size:21px}
 }
 </style>
 </head>
@@ -51,207 +56,297 @@ td,th{text-align:left;padding:12px;border-bottom:1px solid #e9edf5}
 <header>
   <h2>MY SCHOOL SYSTEM</h2>
   <div>
-    <button class="mobile-menu" id="menuBtn">Menu</button>
+    <button class="menuBtn" id="menuBtn">Menu</button>
     <button class="logout" id="logoutBtn">Sign out</button>
   </div>
 </header>
 
 <div class="layout">
-  <aside id="sidebar">
-    <h4>SCHOOL MANAGEMENT</h4>
-    <button class="nav active" data-page="overview">Dashboard Overview</button>
-    <button class="nav" data-page="details">School Details</button>
-    <button class="nav" data-page="teachers">Teachers</button>
-    <button class="nav" data-page="students">Students</button>
-    <button class="nav" data-page="classes">Classes & Subjects</button>
-    <button class="nav" data-page="attendance">Attendance</button>
-    <button class="nav" data-page="fees">Fees & Payments</button>
-    <button class="nav" data-page="exams">Exams & Results</button>
-    <button class="nav" data-page="reports">Reports</button>
-    <button class="nav" data-page="settings">Account Settings</button>
-  </aside>
+<aside id="sidebar">
+  <h4>SCHOOL MANAGEMENT</h4>
+  <button class="nav active" data-page="overview">Dashboard</button>
+  <button class="nav" data-page="details">School Details</button>
+  <button class="nav" data-page="teachers">Teachers</button>
+  <button class="nav" data-page="students">Students</button>
+  <button class="nav" data-page="classes">Classes & Subjects</button>
+  <button class="nav" data-page="attendance">Attendance</button>
+  <button class="nav" data-page="fees">Fees & Payments</button>
+  <button class="nav" data-page="exams">Exams & Results</button>
+  <button class="nav" data-page="reports">Reports</button>
+  <button class="nav" data-page="settings">Account Settings</button>
+</aside>
 
-  <main>
-    <div id="message">Verifying your school administrator account...</div>
-
-    <section class="welcome">
-      <h1 id="pageTitle">Dashboard Overview</h1>
-      <p id="schoolSubtitle">Loading school information...</p>
-    </section>
-
-    <div id="pageContent"></div>
-  </main>
+<main>
+  <div id="message">Connecting to your school account...</div>
+  <h1 id="pageTitle">Dashboard</h1>
+  <p id="subtitle" class="muted">Loading school information...</p>
+  <div id="content"></div>
+</main>
 </div>
 
 <script>
-const db = window.supabase.createClient(
-  "https://ksidteqtztpfgirfumdz.supabase.co",
-  "sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs"
-);
+const SUPABASE_URL="https://ksidteqtztpfgirfumdz.supabase.co";
+const SUPABASE_KEY="sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-let currentUser = null;
-let profile = null;
-let school = null;
+const $=id=>document.getElementById(id);
+let user=null,profile=null,school=null,teachers=[];
+let currentPage="overview";
 
-const $ = id => document.getElementById(id);
-
-function showMessage(text, type="") {
-  $("message").textContent = text;
-  $("message").className = type;
-}
-
-function safe(value) {
-  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+function safe(v){
+  return String(v??"").replace(/[&<>"']/g,c=>({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[ch]);
+  })[c]);
 }
+function say(text,type=""){
+  $("message").textContent=text;
+  $("message").className=type;
+}
+function schoolId(){return school?.id}
 
-async function initialize() {
-  const {data:{session},error:sessionError} = await db.auth.getSession();
+async function initialize(){
+  const {data:{session},error}=await db.auth.getSession();
+  if(error)throw error;
+  if(!session){location.replace("school-login.html");return}
+  user=session.user;
 
-  if(sessionError) throw sessionError;
-
-  if(!session) {
-    location.replace("school-login.html");
-    return;
-  }
-
-  currentUser = session.user;
-
-  const {data:p,error:pError} = await db
-    .from("msys_user_profiles")
+  const {data:p,error:pe}=await db.from("msys_user_profiles")
     .select("id,full_name,role,status,school_id")
-    .eq("id",currentUser.id)
-    .maybeSingle();
-
-  if(pError) throw pError;
-
-  if(!p || p.role!=="school_admin" || p.status!=="active" || !p.school_id) {
+    .eq("id",user.id).maybeSingle();
+  if(pe)throw pe;
+  if(!p||p.role!=="school_admin"||p.status!=="active"||!p.school_id){
     await db.auth.signOut();
     location.replace("school-login.html");
     return;
   }
+  profile=p;
 
-  profile = p;
-
-  const {data:s,error:sError} = await db
-    .from("msys_schools")
+  const {data:s,error:se}=await db.from("msys_schools")
     .select("id,name,registration_number,county,address,contact_email,phone,status")
-    .eq("id",profile.school_id)
-    .maybeSingle();
-
-  if(sError) throw sError;
-
-  if(!s || s.status!=="approved") {
+    .eq("id",p.school_id).maybeSingle();
+  if(se)throw se;
+  if(!s||s.status!=="approved"){
     await db.auth.signOut();
     location.replace("school-login.html");
     return;
   }
-
-  school = s;
-  $("schoolSubtitle").textContent =
-    school.name + " · " + (school.county || "County not specified");
-
-  showMessage("Account verified. Welcome to your school dashboard.", "success");
-  renderPage("overview");
+  school=s;
+  $("subtitle").textContent=s.name+" · "+(s.county||"County not specified");
+  say("Signed in successfully.","success");
+  render("overview");
 }
 
-function renderPage(page) {
-  document.querySelectorAll(".nav").forEach(b => {
-    b.classList.toggle("active",b.dataset.page===page);
-  });
+const titles={
+ overview:"Dashboard",
+ details:"School Details",
+ teachers:"Teacher Management",
+ students:"Student Management",
+ classes:"Classes & Subjects",
+ attendance:"Attendance",
+ fees:"Fees & Payments",
+ exams:"Exams & Results",
+ reports:"Reports",
+ settings:"Account Settings"
+};
 
-  const titles = {
-    overview:"Dashboard Overview",
-    details:"School Details",
-    teachers:"Teachers",
-    students:"Students",
-    classes:"Classes & Subjects",
-    attendance:"Attendance",
-    fees:"Fees & Payments",
-    exams:"Exams & Results",
-    reports:"Reports",
-    settings:"Account Settings"
-  };
+function render(page){
+  currentPage=page;
+  document.querySelectorAll(".nav").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  $("pageTitle").textContent=titles[page]||"Dashboard";
+  $("sidebar").classList.remove("open");
 
-  $("pageTitle").textContent = titles[page] || "School Dashboard";
-
-  if(page==="overview") {
-    $("pageContent").innerHTML = `
+  if(page==="overview"){
+    $("content").innerHTML=`
       <div class="cards">
-        <div class="card"><small>School status</small><h2>Approved</h2></div>
-        <div class="card"><small>Administrator</small><h2 style="font-size:19px">${safe(profile.full_name || "Admin")}</h2></div>
-        <div class="card"><small>School registration</small><h2 style="font-size:19px">${safe(school.registration_number || "Not set")}</h2></div>
+        <div class="card"><small>School</small><h2>${safe(school.name)}</h2></div>
+        <div class="card"><small>Approval status</small><h2>Approved</h2></div>
+        <div class="card"><small>Administrator</small><h2>${safe(profile.full_name||"Administrator")}</h2></div>
+        <div class="card"><small>Teachers</small><h2 id="teacherCount">Loading...</h2></div>
       </div>
-      <div class="panel">
-        <h3>Welcome</h3>
-        <p class="info">Your school administrator account is active. Use the menu to manage school information and access the modules as they are connected.</p>
-      </div>`;
-  } else if(page==="details") {
-    $("pageContent").innerHTML = `
-      <div class="panel">
-        <h3>Registered School Information</h3>
-        <div class="tablewrap"><table>
-          <tr><th>School name</th><td>${safe(school.name)}</td></tr>
-          <tr><th>Registration number</th><td>${safe(school.registration_number)}</td></tr>
-          <tr><th>County</th><td>${safe(school.county)}</td></tr>
-          <tr><th>Address</th><td>${safe(school.address)}</td></tr>
-          <tr><th>Email</th><td>${safe(school.contact_email)}</td></tr>
-          <tr><th>Phone</th><td>${safe(school.phone)}</td></tr>
-          <tr><th>Approval status</th><td>${safe(school.status)}</td></tr>
-        </table></div>
-        <p class="info">To protect the approval record, school detail editing will be added through a controlled update form.</p>
-      </div>`;
-  } else {
-    const descriptions = {
-      teachers:"Register teachers, assign subjects, and manage teacher records.",
-      students:"Register students, assign admission numbers, and manage student records.",
-      classes:"Create classes, streams, subjects, and class assignments.",
-      attendance:"Record daily attendance and review absence reports.",
-      fees:"Manage fee structures, payment records, and outstanding balances.",
-      exams:"Set examinations, enter marks, and generate student results.",
-      reports:"Generate school, attendance, fee, and academic reports.",
-      settings:"Manage your account details and password."
+      <div class="panel"><h3>Welcome to your school</h3>
+      <p class="muted">Use the navigation menu to manage your school. Start by registering your teachers, then proceed to students, classes, attendance, fees and examinations as these modules are connected.</p>
+      <button class="primary" onclick="render('teachers')">Manage Teachers</button></div>`;
+    loadTeacherCount();
+  }else if(page==="details"){
+    $("content").innerHTML=`
+      <div class="panel"><h3>Registered school information</h3>
+      <div class="tablewrap"><table>
+      <tr><th>School name</th><td>${safe(school.name)}</td></tr>
+      <tr><th>Registration number</th><td>${safe(school.registration_number)}</td></tr>
+      <tr><th>County</th><td>${safe(school.county)}</td></tr>
+      <tr><th>Address</th><td>${safe(school.address)}</td></tr>
+      <tr><th>Email</th><td>${safe(school.contact_email)}</td></tr>
+      <tr><th>Phone</th><td>${safe(school.phone)}</td></tr>
+      <tr><th>Status</th><td><span class="badge">${safe(school.status)}</span></td></tr>
+      </table></div></div>`;
+  }else if(page==="teachers"){
+    renderTeachers();
+  }else if(page==="settings"){
+    $("content").innerHTML=`
+      <div class="panel"><h3>Account information</h3>
+      <p><b>Name:</b> ${safe(profile.full_name)}</p>
+      <p><b>Email:</b> ${safe(user.email)}</p>
+      <p><b>Role:</b> School Administrator</p>
+      <p class="muted">Password reset and profile editing can be connected next.</p>
+      <button class="primary" onclick="resetPassword()">Send password reset email</button>
+      <p id="settingsMessage"></p></div>`;
+  }else{
+    const descriptions={
+      students:"Student admission records, guardian contacts, and class assignments.",
+      classes:"Classes, streams, subjects, and class assignments.",
+      attendance:"Daily attendance records and absence reports.",
+      fees:"Fee structures, payment records, and outstanding balances.",
+      exams:"Examinations, marks, grades, and student results.",
+      reports:"School, attendance, fee, and academic reports."
     };
-
-    $("pageContent").innerHTML = `
-      <div class="panel">
-        <h3>${safe(titles[page])}</h3>
-        <div class="placeholder">
-          <strong>Module ready for development</strong>
-          <p>${safe(descriptions[page] || "")}</p>
-          <p>This section will be connected to its own database tables and working forms next.</p>
-        </div>
+    $("content").innerHTML=`
+      <div class="panel"><h3>${safe(titles[page])}</h3>
+      <p>${safe(descriptions[page]||"School management module")}</p>
+      <p class="muted">This module needs its database tables and working forms. We can implement it next without changing the existing school records.</p>
       </div>`;
   }
-
-  $("sidebar").classList.remove("open");
 }
 
-document.querySelectorAll(".nav").forEach(button => {
-  button.addEventListener("click", () => renderPage(button.dataset.page));
-});
+function renderTeachers(){
+  $("content").innerHTML=`
+    <div class="panel">
+      <h3>Register a teacher</h3>
+      <form id="teacherForm">
+        <label>Full name</label><input id="tName" maxlength="120" required>
+        <label>Teacher number</label><input id="tNumber" maxlength="40" required>
+        <label>Email</label><input id="tEmail" type="email">
+        <label>Phone</label><input id="tPhone" type="tel">
+        <label>Subject</label><input id="tSubject" maxlength="100">
+        <label>Employment date</label><input id="tDate" type="date">
+        <button class="primary" id="saveTeacher" type="submit">Save Teacher</button>
+        <p id="teacherMessage"></p>
+      </form>
+    </div>
+    <div class="panel">
+      <h3>Teacher records</h3>
+      <input id="tSearch" placeholder="Search name, number or subject">
+      <div class="tablewrap"><table>
+        <thead><tr><th>Name</th><th>Teacher No.</th><th>Subject</th><th>Contact</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody id="teacherRows"><tr><td colspan="6">Loading...</td></tr></tbody>
+      </table></div>
+    </div>`;
 
-$("menuBtn").addEventListener("click",() => $("sidebar").classList.toggle("open"));
+  $("teacherForm").addEventListener("submit",saveTeacher);
+  $("tSearch").addEventListener("input",loadTeachers);
+  loadTeachers();
+}
 
-$("logoutBtn").addEventListener("click",async()=>{
-  const {error} = await db.auth.signOut();
-  if(error) {
-    showMessage("Sign out failed: " + error.message,"error");
+async function saveTeacher(event){
+  event.preventDefault();
+  const btn=$("saveTeacher"),output=$("teacherMessage");
+  btn.disabled=true;
+  output.textContent="Saving teacher...";
+  try{
+    const record={
+      school_id:schoolId(),
+      full_name:$("tName").value.trim(),
+      teacher_number:$("tNumber").value.trim(),
+      email:$("tEmail").value.trim()||null,
+      phone:$("tPhone").value.trim()||null,
+      subject:$("tSubject").value.trim()||null,
+      employment_date:$("tDate").value||null,
+      status:"active",
+      created_by:user.id
+    };
+    const {error}=await db.from("msys_teachers").insert(record);
+    if(error)throw error;
+    output.textContent="Teacher registered successfully.";
+    output.style.color="green";
+    $("teacherForm").reset();
+    await loadTeachers();
+  }catch(e){
+    output.textContent="Could not save teacher: "+e.message;
+    output.style.color="#b42318";
+  }finally{
+    btn.disabled=false;
+  }
+}
+
+async function loadTeachers(){
+  if(!school)return;
+  const tbody=$("teacherRows");
+  if(!tbody)return;
+  tbody.innerHTML='<tr><td colspan="6">Loading teachers...</td></tr>';
+
+  let query=db.from("msys_teachers")
+    .select("id,full_name,teacher_number,email,phone,subject,status")
+    .eq("school_id",school.id).order("full_name");
+
+  const term=$("tSearch")?.value.trim();
+  if(term){
+    query=query.ilike("full_name","%"+term.replace(/[%_,]/g," ")+"%");
+  }
+
+  const {data,error}=await query;
+  if(error){
+    tbody.innerHTML=`<tr><td colspan="6">Error: ${safe(error.message)}. Check that the teachers SQL was run.</td></tr>`;
     return;
   }
+  teachers=data||[];
+  if(!teachers.length){
+    tbody.innerHTML='<tr><td colspan="6">No teacher records found.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML=teachers.map(t=>`
+    <tr>
+      <td>${safe(t.full_name)}</td>
+      <td>${safe(t.teacher_number)}</td>
+      <td>${safe(t.subject)}</td>
+      <td>${safe(t.email)}<br>${safe(t.phone)}</td>
+      <td><span class="badge">${safe(t.status)}</span></td>
+      <td>${t.status==="active"
+        ?`<button class="danger" onclick="changeTeacherStatus('${t.id}','inactive')">Deactivate</button>`
+        :`<button class="primary" onclick="changeTeacherStatus('${t.id}','active')">Reactivate</button>`}
+      </td>
+    </tr>`).join("");
+}
+
+async function loadTeacherCount(){
+  const {count,error}=await db.from("msys_teachers")
+    .select("id",{count:"exact",head:true})
+    .eq("school_id",school.id);
+  const element=$("teacherCount");
+  if(element)element.textContent=error?"—":String(count||0);
+}
+
+async function changeTeacherStatus(id,status){
+  if(!confirm("Change this teacher's status to "+status+"?"))return;
+  const {error}=await db.from("msys_teachers")
+    .update({status,updated_at:new Date().toISOString()})
+    .eq("id",id).eq("school_id",school.id);
+  if(error){alert("Update failed: "+error.message);return}
+  await loadTeachers();
+  if(currentPage==="overview")await loadTeacherCount();
+}
+
+async function resetPassword(){
+  const output=$("settingsMessage");
+  output.textContent="Sending password reset email...";
+  const {error}=await db.auth.resetPasswordForEmail(user.email,{
+    redirectTo:location.origin+location.pathname.replace(/[^/]*$/,"")+"school-login.html"
+  });
+  output.textContent=error?"Reset failed: "+error.message:"If your email is registered, a password reset email will be sent.";
+}
+
+document.querySelectorAll(".nav").forEach(b=>b.addEventListener("click",()=>render(b.dataset.page)));
+$("menuBtn").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error}=await db.auth.signOut();
+  if(error){say("Sign out failed: "+error.message,"error");return}
   location.replace("school-login.html");
 });
 
 db.auth.onAuthStateChange((event,session)=>{
-  if(event==="SIGNED_OUT" || !session) {
-    location.replace("school-login.html");
-  }
+  if(event==="SIGNED_OUT"||!session)location.replace("school-login.html");
 });
 
-initialize().catch(error=>{
-  showMessage("Dashboard error: " + (error.message || String(error)),"error");
-});
+initialize().catch(e=>say("Dashboard error: "+e.message,"error"));
 </script>
 </body>
 </html>
