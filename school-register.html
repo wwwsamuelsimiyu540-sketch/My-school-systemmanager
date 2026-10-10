@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>School Administrator Registration | My School System</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172554}
+main{max-width:620px;margin:30px auto;padding:24px}
+form{background:white;padding:24px;border-radius:16px;box-shadow:0 8px 28px #0f172a12}
+h1{font-size:26px;margin-top:0}
+p{line-height:1.5;color:#475569}
+label{display:block;font-weight:600;margin:14px 0 6px}
+input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
+button{width:100%;margin-top:20px;padding:14px;background:#1d4ed8;color:white;border:0;border-radius:8px;font-size:16px;font-weight:bold}
+button:disabled{opacity:.6}
+#message{margin-top:16px;padding:12px;border-radius:8px;overflow-wrap:anywhere}
+.note{font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<form id="registerForm">
+<h1>Register Your School</h1>
+<p>Register as a school administrator. Your school will remain pending until the developer reviews your application.</p>
+
+<label for="full_name">Full name *</label>
+<input id="full_name" required autocomplete="name">
+
+<label for="username">Username *</label>
+<input id="username" required minlength="3" autocomplete="username">
+
+<label for="email">Email address *</label>
+<input id="email" type="email" required autocomplete="email">
+
+<label for="phone">Phone number</label>
+<input id="phone" type="tel" autocomplete="tel">
+
+<label for="school_name">School name *</label>
+<input id="school_name" required>
+
+<label for="registration_number">School registration number</label>
+<input id="registration_number">
+
+<label for="county">County</label>
+<input id="county">
+
+<label for="address">School address</label>
+<input id="address">
+
+<label for="password">Password *</label>
+<input id="password" type="password" required minlength="8"
+       autocomplete="new-password">
+
+<label for="confirm_password">Confirm password *</label>
+<input id="confirm_password" type="password" required minlength="8"
+       autocomplete="new-password">
+
+<p class="note">Use at least 8 characters. Confirm your email before attempting to sign in.</p>
+<button id="submitButton" type="submit">Register School</button>
+<div id="message" role="status" aria-live="polite"></div>
+</form>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+const message = document.getElementById("message");
+const form = document.getElementById("registerForm");
+const submitButton = document.getElementById("submitButton");
+
+const configured =
+  SUPABASE_URL.startsWith("https://") &&
+  !SUPABASE_URL.includes("YOUR_SUPABASE") &&
+  !SUPABASE_PUBLISHABLE_KEY.includes("YOUR_SUPABASE");
+
+let client = null;
+
+if (configured && window.supabase) {
+  client = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  message.textContent = "";
+
+  if (!client) {
+    message.textContent =
+      "Setup required: enter your Supabase project URL and publishable key.";
+    return;
+  }
+
+  const fullName = document.getElementById("full_name").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const schoolName = document.getElementById("school_name").value.trim();
+  const registrationNumber =
+    document.getElementById("registration_number").value.trim();
+  const county = document.getElementById("county").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmation =
+    document.getElementById("confirm_password").value;
+
+  if (password !== confirmation) {
+    message.textContent = "The passwords do not match.";
+    return;
+  }
+
+  if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(username)) {
+    message.textContent =
+      "Use 3–30 characters for the username: letters, numbers, dots, underscores or hyphens.";
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Registering...";
+
+  try {
+    const { data, error } = await client.auth.signUp({
+      email,
+      password,
+      options: {
+        // Configure this URL in Supabase Auth URL settings.
+        emailRedirectTo: window.location.origin +
+          window.location.pathname.replace(
+            /[^/]*$/,
+            "school-login.html"
+          ),
+        data: {
+          registration_type: "school_admin",
+          full_name: fullName,
+          username,
+          phone,
+          school_name: schoolName,
+          registration_number: registrationNumber,
+          county,
+          address
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    message.textContent =
+      "Registration submitted. Check your email for the confirmation link. " +
+      "Your school must still be approved by the developer before you can use the system.";
+
+    form.reset();
+  } catch (error) {
+    message.textContent = "Registration failed: " + error.message;
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Register School";
+  }
+});
+</script>
+</body>
+</html>
