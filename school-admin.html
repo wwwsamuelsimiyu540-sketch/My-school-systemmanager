@@ -4,60 +4,254 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>School Administrator | My School System</title>
+<title>My School System | School Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f3f6fc;color:#17233f}
-header{background:#111c3a;color:white;padding:20px}
-main{max-width:850px;margin:25px auto;padding:20px}
-section{background:white;padding:22px;border-radius:12px}
-button{padding:11px 16px;border:0;border-radius:7px;background:#4169e1;color:white;cursor:pointer}
+:root{--navy:#111c3a;--navy2:#1b2a52;--blue:#4169e1;--bg:#f3f6fc;--white:#fff;--muted:#748098}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#202b45}
+header{height:66px;background:var(--navy);color:white;display:flex;align-items:center;justify-content:space-between;padding:0 20px;gap:12px}
+header h2{font-size:18px;margin:0}
+button{cursor:pointer;border:0;border-radius:7px;padding:10px 13px;font-weight:bold}
+.logout{background:#fff;color:var(--navy)}
+.layout{display:flex;min-height:calc(100vh - 66px)}
+aside{width:235px;background:var(--navy2);padding:16px 10px;color:white;flex-shrink:0}
+aside h4{margin:8px 12px 16px;color:#bdc9e8}
+.nav{display:block;width:100%;text-align:left;padding:12px;margin:3px 0;background:transparent;color:#e8edfa;border-radius:7px}
+.nav:hover,.nav.active{background:#4169e1;color:white}
+main{padding:23px;width:100%;min-width:0}
+.welcome{margin-bottom:20px}
+.welcome h1{margin:0 0 7px;font-size:25px}
+.welcome p{margin:0;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:15px;margin:20px 0}
+.card,.panel{background:white;border-radius:12px;padding:19px;box-shadow:0 3px 15px #18264a0b}
+.card small{color:var(--muted)}
+.card h2{margin:12px 0 0;font-size:25px}
+.panel h3{margin-top:0}
+#message{white-space:pre-wrap;margin:12px 0}
+.error{color:#b42318}.success{color:#16713c}
+.info{color:var(--muted);line-height:1.6}
+table{width:100%;border-collapse:collapse}
+td,th{text-align:left;padding:12px;border-bottom:1px solid #e9edf5}
+.tablewrap{overflow-x:auto}
+.placeholder{padding:18px;border-radius:8px;background:#f5f7fc;line-height:1.7}
+.mobile-menu{display:none;background:#4169e1;color:white}
+@media(max-width:700px){
+ .layout{display:block}
+ aside{width:100%;display:none}
+ aside.open{display:block}
+ main{padding:15px}
+ .mobile-menu{display:inline-block}
+ header h2{font-size:15px}
+ .welcome h1{font-size:21px}
+}
 </style>
 </head>
 <body>
-<header><h2>My School System</h2></header>
-<main>
-<section>
-<h2>School Administrator Dashboard</h2>
-<p id="status">Checking your account...</p>
-<button id="logout">Sign out</button>
-</section>
-</main>
+<header>
+  <h2>MY SCHOOL SYSTEM</h2>
+  <div>
+    <button class="mobile-menu" id="menuBtn">Menu</button>
+    <button class="logout" id="logoutBtn">Sign out</button>
+  </div>
+</header>
+
+<div class="layout">
+  <aside id="sidebar">
+    <h4>SCHOOL MANAGEMENT</h4>
+    <button class="nav active" data-page="overview">Dashboard Overview</button>
+    <button class="nav" data-page="details">School Details</button>
+    <button class="nav" data-page="teachers">Teachers</button>
+    <button class="nav" data-page="students">Students</button>
+    <button class="nav" data-page="classes">Classes & Subjects</button>
+    <button class="nav" data-page="attendance">Attendance</button>
+    <button class="nav" data-page="fees">Fees & Payments</button>
+    <button class="nav" data-page="exams">Exams & Results</button>
+    <button class="nav" data-page="reports">Reports</button>
+    <button class="nav" data-page="settings">Account Settings</button>
+  </aside>
+
+  <main>
+    <div id="message">Verifying your school administrator account...</div>
+
+    <section class="welcome">
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <p id="schoolSubtitle">Loading school information...</p>
+    </section>
+
+    <div id="pageContent"></div>
+  </main>
+</div>
+
 <script>
 const db = window.supabase.createClient(
   "https://ksidteqtztpfgirfumdz.supabase.co",
   "sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs"
 );
 
-(async()=>{
-  const {data:{session}} = await db.auth.getSession();
-  if(!session){
+let currentUser = null;
+let profile = null;
+let school = null;
+
+const $ = id => document.getElementById(id);
+
+function showMessage(text, type="") {
+  $("message").textContent = text;
+  $("message").className = type;
+}
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
+}
+
+async function initialize() {
+  const {data:{session},error:sessionError} = await db.auth.getSession();
+
+  if(sessionError) throw sessionError;
+
+  if(!session) {
     location.replace("school-login.html");
     return;
   }
 
-  const {data:profile,error} = await db
+  currentUser = session.user;
+
+  const {data:p,error:pError} = await db
     .from("msys_user_profiles")
-    .select("role,status,school_id,full_name")
-    .eq("id",session.user.id)
+    .select("id,full_name,role,status,school_id")
+    .eq("id",currentUser.id)
     .maybeSingle();
 
-  if(error || !profile || profile.role!=="school_admin" || profile.status!=="active"){
-    document.getElementById("status").textContent =
-      "Access denied. Please sign in with an approved school administrator account.";
+  if(pError) throw pError;
+
+  if(!p || p.role!=="school_admin" || p.status!=="active" || !p.school_id) {
     await db.auth.signOut();
+    location.replace("school-login.html");
     return;
   }
 
-  document.getElementById("status").textContent =
-    "Welcome, " + (profile.full_name || "School Administrator") +
-    ". Your account is active. We will add the school management modules next.";
-})();
+  profile = p;
 
-document.getElementById("logout").onclick=async()=>{
-  await db.auth.signOut();
+  const {data:s,error:sError} = await db
+    .from("msys_schools")
+    .select("id,name,registration_number,county,address,contact_email,phone,status")
+    .eq("id",profile.school_id)
+    .maybeSingle();
+
+  if(sError) throw sError;
+
+  if(!s || s.status!=="approved") {
+    await db.auth.signOut();
+    location.replace("school-login.html");
+    return;
+  }
+
+  school = s;
+  $("schoolSubtitle").textContent =
+    school.name + " · " + (school.county || "County not specified");
+
+  showMessage("Account verified. Welcome to your school dashboard.", "success");
+  renderPage("overview");
+}
+
+function renderPage(page) {
+  document.querySelectorAll(".nav").forEach(b => {
+    b.classList.toggle("active",b.dataset.page===page);
+  });
+
+  const titles = {
+    overview:"Dashboard Overview",
+    details:"School Details",
+    teachers:"Teachers",
+    students:"Students",
+    classes:"Classes & Subjects",
+    attendance:"Attendance",
+    fees:"Fees & Payments",
+    exams:"Exams & Results",
+    reports:"Reports",
+    settings:"Account Settings"
+  };
+
+  $("pageTitle").textContent = titles[page] || "School Dashboard";
+
+  if(page==="overview") {
+    $("pageContent").innerHTML = `
+      <div class="cards">
+        <div class="card"><small>School status</small><h2>Approved</h2></div>
+        <div class="card"><small>Administrator</small><h2 style="font-size:19px">${safe(profile.full_name || "Admin")}</h2></div>
+        <div class="card"><small>School registration</small><h2 style="font-size:19px">${safe(school.registration_number || "Not set")}</h2></div>
+      </div>
+      <div class="panel">
+        <h3>Welcome</h3>
+        <p class="info">Your school administrator account is active. Use the menu to manage school information and access the modules as they are connected.</p>
+      </div>`;
+  } else if(page==="details") {
+    $("pageContent").innerHTML = `
+      <div class="panel">
+        <h3>Registered School Information</h3>
+        <div class="tablewrap"><table>
+          <tr><th>School name</th><td>${safe(school.name)}</td></tr>
+          <tr><th>Registration number</th><td>${safe(school.registration_number)}</td></tr>
+          <tr><th>County</th><td>${safe(school.county)}</td></tr>
+          <tr><th>Address</th><td>${safe(school.address)}</td></tr>
+          <tr><th>Email</th><td>${safe(school.contact_email)}</td></tr>
+          <tr><th>Phone</th><td>${safe(school.phone)}</td></tr>
+          <tr><th>Approval status</th><td>${safe(school.status)}</td></tr>
+        </table></div>
+        <p class="info">To protect the approval record, school detail editing will be added through a controlled update form.</p>
+      </div>`;
+  } else {
+    const descriptions = {
+      teachers:"Register teachers, assign subjects, and manage teacher records.",
+      students:"Register students, assign admission numbers, and manage student records.",
+      classes:"Create classes, streams, subjects, and class assignments.",
+      attendance:"Record daily attendance and review absence reports.",
+      fees:"Manage fee structures, payment records, and outstanding balances.",
+      exams:"Set examinations, enter marks, and generate student results.",
+      reports:"Generate school, attendance, fee, and academic reports.",
+      settings:"Manage your account details and password."
+    };
+
+    $("pageContent").innerHTML = `
+      <div class="panel">
+        <h3>${safe(titles[page])}</h3>
+        <div class="placeholder">
+          <strong>Module ready for development</strong>
+          <p>${safe(descriptions[page] || "")}</p>
+          <p>This section will be connected to its own database tables and working forms next.</p>
+        </div>
+      </div>`;
+  }
+
+  $("sidebar").classList.remove("open");
+}
+
+document.querySelectorAll(".nav").forEach(button => {
+  button.addEventListener("click", () => renderPage(button.dataset.page));
+});
+
+$("menuBtn").addEventListener("click",() => $("sidebar").classList.toggle("open"));
+
+$("logoutBtn").addEventListener("click",async()=>{
+  const {error} = await db.auth.signOut();
+  if(error) {
+    showMessage("Sign out failed: " + error.message,"error");
+    return;
+  }
   location.replace("school-login.html");
-};
+});
+
+db.auth.onAuthStateChange((event,session)=>{
+  if(event==="SIGNED_OUT" || !session) {
+    location.replace("school-login.html");
+  }
+});
+
+initialize().catch(error=>{
+  showMessage("Dashboard error: " + (error.message || String(error)),"error");
+});
 </script>
 </body>
 </html>
