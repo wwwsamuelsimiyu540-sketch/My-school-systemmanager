@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My School System | Developer Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--navy:#111c3a;--blue:#4169e1;--bg:#f3f6fc;--text:#202b45;--muted:#69758b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+header{background:var(--navy);color:white;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h2{margin:0;font-size:20px}
+button{border:0;border-radius:7px;padding:10px 13px;cursor:pointer;font-weight:bold}
+.logout{background:white;color:var(--navy)}
+main{max-width:1250px;margin:24px auto;padding:0 16px}
+.panel,.stat{background:white;border-radius:12px;padding:18px;box-shadow:0 3px 15px #18264a0d}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:13px;margin-bottom:20px}
+.stat small{color:var(--muted)}
+.stat h2{margin:10px 0 0;font-size:28px}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
+input,select,textarea{padding:11px;border:1px solid #d5dceb;border-radius:7px;font:inherit;background:white;max-width:100%}
+#search{flex:1;min-width:180px}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:850px}
+th,td{text-align:left;padding:13px 10px;border-bottom:1px solid #e9edf5;vertical-align:top}
+th{background:#f8faff}
+.status{display:inline-block;border-radius:20px;padding:5px 9px;background:#edf0f7;font-size:12px;font-weight:bold}
+.pending{background:#fff2cf;color:#865a00}
+.approved{background:#dff7e8;color:#116b39}
+.rejected{background:#ffe4e4;color:#a12222}
+.suspended{background:#e5e7eb;color:#374151}
+.actions{display:flex;gap:6px;flex-wrap:wrap;max-width:250px}
+.approve{background:#16834a;color:white}
+.reject{background:#bd2e37;color:white}
+.suspend{background:#4b5563;color:white}
+.reactivate{background:#4169e1;color:white}
+.note{font-size:12px;color:var(--muted);margin-top:6px}
+#message{margin:12px 0;white-space:pre-wrap}
+.error{color:#b42318}.success{color:#16713c}
+.empty{text-align:center;padding:28px;color:var(--muted)}
+@media(max-width:600px){header h2{font-size:17px}main{margin-top:14px}.panel{padding:12px}}
+</style>
+</head>
+<body>
+<header>
+  <h2>My School System — Developer</h2>
+  <button class="logout" id="logoutBtn">Sign out</button>
+</header>
+
+<main>
+  <div id="message">Connecting to Supabase...</div>
+
+  <section class="stats">
+    <div class="stat"><small>Total schools</small><h2 id="total">0</h2></div>
+    <div class="stat"><small>Pending</small><h2 id="pending">0</h2></div>
+    <div class="stat"><small>Approved</small><h2 id="approved">0</h2></div>
+    <div class="stat"><small>Rejected</small><h2 id="rejected">0</h2></div>
+    <div class="stat"><small>Suspended</small><h2 id="suspended">0</h2></div>
+  </section>
+
+  <section class="panel">
+    <h3>School registrations</h3>
+    <p class="note">Review each school before approving its administrator's access.</p>
+    <div class="toolbar">
+      <input id="search" placeholder="Search school, registration number, county...">
+      <select id="filter">
+        <option value="all">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="suspended">Suspended</option>
+      </select>
+      <button id="refreshBtn">Refresh</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>School</th>
+            <th>Registration number</th>
+            <th>Location</th>
+            <th>Contact</th>
+            <th>Status</th>
+            <th>Review note</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="schoolRows">
+          <tr><td colspan="7" class="empty">Loading schools...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://ksidteqtztpfgirfumdz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs";
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let schools = [];
+let busy = false;
+
+const $ = id => document.getElementById(id);
+
+function message(text, type="") {
+  $("message").textContent = text;
+  $("message").className = type;
+}
+
+function safe(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[ch]);
+}
+
+function statusBadge(status) {
+  return `<span class="status ${safe(status)}">${safe(status)}</span>`;
+}
+
+async function checkDeveloper() {
+  const {data:{session}, error} = await db.auth.getSession();
+
+  if (error) throw error;
+
+  if (!session) {
+    message("Please sign in with your developer account. Open your developer login page first.", "error");
+    return false;
+  }
+
+  const {data:profile, error:profileError} = await db
+    .from("msys_user_profiles")
+    .select("role,status")
+    .eq("id", session.user.id)
+    .maybeSingle();
+
+  if (profileError) throw profileError;
+
+  if (!profile || profile.role !== "developer" || profile.status !== "active") {
+    message("Access denied. This account is not an active developer.", "error");
+    return false;
+  }
+
+  return true;
+}
+
+function updateCounts() {
+  $("total").textContent = schools.length;
+  for (const s of ["pending","approved","rejected","suspended"]) {
+    $(s).textContent = schools.filter(x => x.status === s).length;
+  }
+}
+
+function renderSchools() {
+  const term = $("search").value.trim().toLowerCase();
+  const filter = $("filter").value;
+
+  const list = schools.filter(s => {
+    const text = [s.name,s.registration_number,s.county,s.address,s.contact_email,s.phone]
+      .filter(Boolean).join(" ").toLowerCase();
+    return (!term || text.includes(term)) && (filter === "all" || s.status === filter);
+  });
+
+  if (!list.length) {
+    $("schoolRows").innerHTML =
+      '<tr><td colspan="7" class="empty">No schools match this search.</td></tr>';
+    return;
+  }
+
+  $("schoolRows").innerHTML = list.map(s => {
+    let actions = "";
+
+    if (s.status === "pending") {
+      actions = `
+        <button class="approve" onclick="reviewSchool('${s.id}','approved')">Approve</button>
+        <button class="reject" onclick="reviewSchool('${s.id}','rejected')">Reject</button>
+        <button class="suspend" onclick="reviewSchool('${s.id}','suspended')">Suspend</button>`;
+    } else if (s.status === "approved") {
+      actions = `<button class="suspend" onclick="reviewSchool('${s.id}','suspended')">Suspend</button>`;
+    } else if (s.status === "suspended") {
+      actions = `<button class="reactivate" onclick="reviewSchool('${s.id}','reactivated')">Reactivate</button>`;
+    } else if (s.status === "rejected") {
+      actions = `
+        <button class="approve" onclick="reviewSchool('${s.id}','approved')">Approve</button>
+        <button class="suspend" onclick="reviewSchool('${s.id}','suspended')">Suspend</button>`;
+    }
+
+    return `<tr>
+      <td><strong>${safe(s.name)}</strong><div class="note">${safe(s.created_at ? new Date(s.created_at).toLocaleString() : "")}</div></td>
+      <td>${safe(s.registration_number)}</td>
+      <td>${safe(s.county)}<div class="note">${safe(s.address)}</div></td>
+      <td>${safe(s.contact_email)}<div class="note">${safe(s.phone)}</div></td>
+      <td>${statusBadge(s.status)}</td>
+      <td>${safe(s.review_note)}</td>
+      <td><div class="actions">${actions}</div></td>
+    </tr>`;
+  }).join("");
+}
+
+async function loadSchools() {
+  message("Loading school registrations...");
+
+  const {data, error} = await db
+    .from("msys_schools")
+    .select("id,name,registration_number,county,address,contact_email,phone,status,review_note,created_at")
+    .order("created_at", {ascending:false});
+
+  if (error) {
+    message("Could not load schools: " + error.message, "error");
+    return;
+  }
+
+  schools = data || [];
+  updateCounts();
+  renderSchools();
+  message("School registrations loaded.", "success");
+}
+
+async function reviewSchool(id, decision) {
+  if (busy) return;
+
+  const school = schools.find(s => s.id === id);
+  if (!school) return;
+
+  const prompts = {
+    approved: "Approve this school and activate its school administrator?",
+    rejected: "Reject this school registration?",
+    suspended: "Suspend this school and its administrator?",
+    reactivated: "Reactivate this school and its administrator?"
+  };
+
+  if (!confirm(prompts[decision])) return;
+
+  const note = prompt("Enter a review note (optional):");
+  if (note === null) return;
+
+  busy = true;
+  message("Processing " + decision + "...");
+
+  try {
+    const {data, error} = await db.rpc("msys_review_school", {
+      p_school_id: id,
+      p_decision: decision,
+      p_note: note.trim() || null
+    });
+
+    if (error) throw error;
+
+    if (!data || data.success !== true) {
+      throw new Error("The review was not confirmed by the server.");
+    }
+
+    message("School " + decision + " successfully.", "success");
+    await loadSchools();
+  } catch (err) {
+    message("Action failed: " + (err.message || String(err)), "error");
+  } finally {
+    busy = false;
+  }
+}
+
+$("search").addEventListener("input", renderSchools);
+$("filter").addEventListener("change", renderSchools);
+$("refreshBtn").addEventListener("click", loadSchools);
+
+$("logoutBtn").addEventListener("click", async () => {
+  const {error} = await db.auth.signOut();
+  if (error) {
+    message("Sign out failed: " + error.message, "error");
+    return;
+  }
+  window.location.href = "school-login.html";
+});
+
+(async function start() {
+  try {
+    const allowed = await checkDeveloper();
+    if (allowed) await loadSchools();
+  } catch (err) {
+    message("Dashboard error: " + (err.message || String(err)), "error");
+  }
+})();
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT" || !session) {
+    // The user can sign in again through the login page.
+  }
+});
+</script>
+</body>
+</html>
