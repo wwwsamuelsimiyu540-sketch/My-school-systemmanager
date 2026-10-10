@@ -4,164 +4,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>School Administrator Registration | My School System</title>
+<title>Register Your School | My School System</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+:root{--navy:#142447;--blue:#315eea;--bg:#f3f6fc;--ink:#17233b;--muted:#65728a;--border:#dbe3f0;--danger:#b42318;--success:#067647}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f1f5f9;color:#172554}
-main{max-width:620px;margin:30px auto;padding:24px}
-form{background:white;padding:24px;border-radius:16px;box-shadow:0 8px 28px #0f172a12}
-h1{font-size:26px;margin-top:0}
-p{line-height:1.5;color:#475569}
-label{display:block;font-weight:600;margin:14px 0 6px}
-input{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font-size:16px}
-button{width:100%;margin-top:20px;padding:14px;background:#1d4ed8;color:white;border:0;border-radius:8px;font-size:16px;font-weight:bold}
-button:disabled{opacity:.6}
-#message{margin-top:16px;padding:12px;border-radius:8px;overflow-wrap:anywhere}
-.note{font-size:13px}
+body{margin:0;background:linear-gradient(135deg,#edf3ff,#f7fbff);font-family:Arial,Helvetica,sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+.wrap{width:100%;max-width:820px;background:#fff;border:1px solid var(--border);border-radius:22px;box-shadow:0 18px 55px rgba(20,36,71,.12);overflow:hidden}
+.hero{background:linear-gradient(120deg,var(--navy),#24498f);color:#fff;padding:27px 30px}
+.brand{font-weight:800;font-size:22px}
+.hero p{margin:8px 0 0;color:#e1eaff;line-height:1.5}
+main{padding:28px 30px 30px}
+.notice{display:none;padding:13px 15px;border-radius:10px;margin-bottom:18px;line-height:1.45;overflow-wrap:anywhere}
+.notice.show{display:block}
+.notice.error{background:#fff0ef;border:1px solid #ffd2cf;color:var(--danger)}
+.notice.success{background:#eafaf1;border:1px solid #b9e8cd;color:var(--success)}
+.notice.info{background:#edf4ff;border:1px solid #c9dcff;color:#234a98}
+h2{font-size:19px;margin:0 0 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:flex;flex-direction:column;gap:7px;margin-bottom:15px}
+label{font-weight:700;font-size:13px;color:#34415b}
+input{width:100%;border:1px solid #cfd8e8;border-radius:10px;padding:12px 13px;font:inherit;font-size:14px;outline:none}
+input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(49,94,234,.12)}
+.hint{font-size:12px;color:var(--muted);line-height:1.4}
+.section{border-top:1px solid #e9eef6;padding-top:23px;margin-top:7px}
+.btn{width:100%;border:0;border-radius:11px;padding:14px 18px;background:linear-gradient(100deg,var(--blue),#2448b8);color:#fff;font-size:15px;font-weight:800;cursor:pointer}
+.btn:disabled{opacity:.65;cursor:not-allowed}
+.foot{text-align:center;color:var(--muted);font-size:13px;margin-top:17px}
+.foot a{color:var(--blue);font-weight:700;text-decoration:none}
+.required{color:#c12626}
+@media(max-width:620px){body{padding:10px}.hero{padding:22px}main{padding:22px 18px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<div class="wrap">
+<header class="hero">
+<div class="brand">My School System</div>
+<p>Register your school and submit your application for developer approval.</p>
+</header>
 <main>
-<form id="registerForm">
-<h1>Register Your School</h1>
-<p>Register as a school administrator. Your school will remain pending until the developer reviews your application.</p>
+<div id="message" class="notice" role="status" aria-live="polite"></div>
 
-<label for="full_name">Full name *</label>
-<input id="full_name" required autocomplete="name">
+<form id="schoolRegisterForm">
+<h2>School Details</h2>
+<div class="grid">
+<div class="field">
+<label for="schoolName">School Name *</label>
+<input id="schoolName" required maxlength="150" placeholder="Enter school name">
+</div>
+<div class="field">
+<label for="registrationNumber">School Registration Number *</label>
+<input id="registrationNumber" required maxlength="80" placeholder="Official registration number">
+</div>
+<div class="field">
+<label for="county">County *</label>
+<input id="county" required maxlength="100" placeholder="Enter county">
+</div>
+<div class="field">
+<label for="phone">School Phone *</label>
+<input id="phone" required type="tel" maxlength="30" placeholder="School phone number">
+</div>
+<div class="field" style="grid-column:1/-1">
+<label for="address">School Address *</label>
+<input id="address" required maxlength="250" placeholder="Town or school location">
+</div>
+<div class="field" style="grid-column:1/-1">
+<label for="schoolEmail">School Contact Email</label>
+<input id="schoolEmail" type="email" maxlength="254" placeholder="school@example.com">
+</div>
+</div>
 
+<div class="section">
+<h2>Administrator Account</h2>
+<div class="grid">
+<div class="field">
+<label for="fullName">Administrator Full Name *</label>
+<input id="fullName" required maxlength="150" autocomplete="name">
+</div>
+<div class="field">
 <label for="username">Username *</label>
-<input id="username" required minlength="3" autocomplete="username">
-
-<label for="email">Email address *</label>
-<input id="email" type="email" required autocomplete="email">
-
-<label for="phone">Phone number</label>
-<input id="phone" type="tel" autocomplete="tel">
-
-<label for="school_name">School name *</label>
-<input id="school_name" required>
-
-<label for="registration_number">School registration number</label>
-<input id="registration_number">
-
-<label for="county">County</label>
-<input id="county">
-
-<label for="address">School address</label>
-<input id="address">
-
+<input id="username" required minlength="3" maxlength="40" pattern="[A-Za-z0-9_.-]+" placeholder="Choose username">
+<div class="hint">Use letters, numbers, dots, underscores or hyphens.</div>
+</div>
+<div class="field">
+<label for="adminEmail">Administrator Email *</label>
+<input id="adminEmail" required type="email" maxlength="254" placeholder="you@example.com">
+</div>
+<div class="field">
+<label for="adminPhone">Administrator Phone *</label>
+<input id="adminPhone" required type="tel" maxlength="30">
+</div>
+<div class="field">
 <label for="password">Password *</label>
-<input id="password" type="password" required minlength="8"
-       autocomplete="new-password">
+<input id="password" required type="password" minlength="8" autocomplete="new-password">
+</div>
+<div class="field">
+<label for="confirmPassword">Confirm Password *</label>
+<input id="confirmPassword" required type="password" minlength="8" autocomplete="new-password">
+</div>
+</div>
+<p class="hint">Your account will remain pending until a developer approves your school.</p>
+</div>
 
-<label for="confirm_password">Confirm password *</label>
-<input id="confirm_password" type="password" required minlength="8"
-       autocomplete="new-password">
-
-<p class="note">Use at least 8 characters. Confirm your email before attempting to sign in.</p>
-<button id="submitButton" type="submit">Register School</button>
-<div id="message" role="status" aria-live="polite"></div>
+<button class="btn" id="registerSchoolBtn" type="submit">Register School</button>
 </form>
+
+<div class="foot">Already registered? <a href="school-login.html">School Login</a></div>
 </main>
+</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+(function(){
+"use strict";
+
 const SUPABASE_URL = "https://ksidteqtztpfgirfumdz.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs";
+const SUPABASE_KEY = "sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs";
 
+const form = document.getElementById("schoolRegisterForm");
+const button = document.getElementById("registerSchoolBtn");
 const message = document.getElementById("message");
-const form = document.getElementById("registerForm");
-const submitButton = document.getElementById("submitButton");
 
-const configured =
-  SUPABASE_URL.startsWith("https://") &&
-  !SUPABASE_URL.includes("YOUR_SUPABASE") &&
-  !SUPABASE_PUBLISHABLE_KEY.includes("YOUR_SUPABASE");
-
-let client = null;
-
-if (configured && window.supabase) {
-  client = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-  );
+function showMessage(text,type){
+  message.textContent = text;
+  message.className = "notice show " + type;
 }
 
-form.addEventListener("submit", async (event) => {
+function value(id){
+  return document.getElementById(id).value.trim();
+}
+
+if(!window.supabase){
+  showMessage("Supabase could not load. Check your internet connection and refresh the page.","error");
+  button.disabled = true;
+  return;
+}
+
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+form.addEventListener("submit",async function(event){
   event.preventDefault();
-  message.textContent = "";
 
-  if (!client) {
-    message.textContent =
-      "Setup required: enter your Supabase project URL and publishable key.";
+  if(button.disabled) return;
+
+  if(!form.reportValidity()){
+    showMessage("Please complete all required fields correctly.","error");
     return;
   }
 
-  const fullName = document.getElementById("full_name").value.trim();
-  const username = document.getElementById("username").value.trim();
-  const email = document.getElementById("email").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const schoolName = document.getElementById("school_name").value.trim();
-  const registrationNumber =
-    document.getElementById("registration_number").value.trim();
-  const county = document.getElementById("county").value.trim();
-  const address = document.getElementById("address").value.trim();
   const password = document.getElementById("password").value;
-  const confirmation =
-    document.getElementById("confirm_password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
 
-  if (password !== confirmation) {
-    message.textContent = "The passwords do not match.";
+  if(password.length < 8){
+    showMessage("Password must contain at least 8 characters.","error");
     return;
   }
 
-  if (!/^[a-zA-Z0-9_.-]{3,30}$/.test(username)) {
-    message.textContent =
-      "Use 3–30 characters for the username: letters, numbers, dots, underscores or hyphens.";
+  if(password !== confirmPassword){
+    showMessage("The passwords do not match.","error");
     return;
   }
 
-  submitButton.disabled = true;
-  submitButton.textContent = "Registering...";
+  button.disabled = true;
+  button.textContent = "Registering...";
+  showMessage("Submitting your registration. Please wait.","info");
 
-  try {
-    const { data, error } = await client.auth.signUp({
-      email,
-      password,
-      options: {
-        // Configure this URL in Supabase Auth URL settings.
-        emailRedirectTo: window.location.origin +
-          window.location.pathname.replace(
-            /[^/]*$/,
-            "school-login.html"
-          ),
-        data: {
-          registration_type: "school_admin",
-          full_name: fullName,
-          username,
-          phone,
-          school_name: schoolName,
-          registration_number: registrationNumber,
-          county,
-          address
+  try{
+    const email = value("adminEmail").toLowerCase();
+
+    const {data,error} = await db.auth.signUp({
+      email: email,
+      password: password,
+      options:{
+        data:{
+          registration_type:"school_admin",
+          full_name:value("fullName"),
+          username:value("username"),
+          phone:value("adminPhone"),
+          school_name:value("schoolName"),
+          school_registration_number:value("registrationNumber"),
+          school_county:value("county"),
+          school_address:value("address"),
+          school_contact_email:value("schoolEmail") || email,
+          school_phone:value("phone")
         }
       }
     });
 
-    if (error) throw error;
+    if(error) throw error;
 
-    message.textContent =
-      "Registration submitted. Check your email for the confirmation link. " +
-      "Your school must still be approved by the developer before you can use the system.";
+    if(data.user && data.user.identities && data.user.identities.length === 0){
+      throw new Error("This email may already be registered. Try another email or sign in.");
+    }
+
+    if(!data.user){
+      throw new Error("Supabase did not create a user. Check your Supabase Authentication settings.");
+    }
 
     form.reset();
-  } catch (error) {
-    message.textContent = "Registration failed: " + error.message;
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = "Register School";
+
+    if(data.session){
+      await db.auth.signOut();
+    }
+
+    showMessage(
+      "Registration submitted. Check your email if confirmation is required. Your school administrator account must be approved by the developer before you can access the system.",
+      "success"
+    );
+
+  }catch(error){
+    console.error("School registration error:",error);
+    showMessage("Registration failed: " + (error.message || "Unknown error"),"error");
+  }finally{
+    button.disabled = false;
+    button.textContent = "Register School";
   }
 });
+})();
 </script>
 </body>
 </html>
