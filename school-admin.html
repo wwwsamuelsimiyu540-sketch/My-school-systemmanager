@@ -2,463 +2,213 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>My School System | Administration</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My School System | School Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--navy:#14213d;--navy2:#223761;--blue:#4169e1;--cyan:#28c7d9;--bg:#f3f6fc;--border:#e0e7f1;--muted:#758198;--green:#13835b;--red:#c93643;--orange:#a96b00}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:#243047}
-button,input,select,textarea{font:inherit}button{cursor:pointer}
-.layout{min-height:100vh}.sidebar{position:fixed;inset:0 auto 0 0;width:245px;overflow:auto;background:var(--navy);color:#fff;padding:18px 13px;z-index:10}
-.brand{font-size:21px;font-weight:800;padding:12px 10px 23px}.brand span{color:var(--cyan)}
-.group{font-size:10px;letter-spacing:1.2px;color:#aebfe0;padding:14px 10px 5px}
-.navbtn{display:block;width:100%;text-align:left;border:0;background:transparent;color:#dce5fa;padding:11px 10px;border-radius:8px;margin:3px 0;font-size:13px}
-.navbtn:hover,.navbtn.active{background:var(--navy2);color:#fff}.navbtn.active{border-left:3px solid var(--cyan)}
-.main{margin-left:245px;min-width:0}.topbar{background:#fff;border-bottom:1px solid var(--border);height:70px;padding:0 25px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.content{padding:25px;max-width:1500px;margin:auto}.page-title{font-size:25px;margin:0 0 6px}.subtitle{font-size:13px;color:var(--muted);margin:0 0 22px}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:20px}
-.card,.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:18px;box-shadow:0 3px 12px #20345e08}
-.stat-label{font-size:12px;color:var(--muted)}.stat-number{font-size:27px;font-weight:800;margin-top:9px;overflow-wrap:anywhere}
-.panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}.panel h3{font-size:16px;margin:0}
-.btn{border:0;border-radius:7px;padding:10px 13px;font-size:12px;font-weight:700}
-.primary{background:var(--blue);color:#fff}.dark{background:var(--navy);color:#fff}.light{background:#edf2ff;color:var(--blue)}.danger{background:#fff0f0;color:var(--red)}.success{background:#e7f7ef;color:var(--green)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
-.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:12px;font-weight:700}
-.field input,.field select,.field textarea,.search{width:100%;min-width:0;border:1px solid #d6dfed;border-radius:7px;padding:10px;background:#fff;color:#243047}
-.field textarea{min-height:70px}.full{grid-column:1/-1}
-.actions,.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:15px;margin-bottom:13px}
-.search{max-width:340px}.table-wrap{overflow:auto}
-table{border-collapse:collapse;width:100%;min-width:620px}th,td{padding:11px 9px;border-bottom:1px solid var(--border);text-align:left;font-size:12px}th{background:#f7f9fd;color:#66728a}
-.badge{display:inline-block;border-radius:20px;padding:4px 8px;font-size:10px;font-weight:bold;background:#edf2ff;color:#4169e1}
-.badge.active,.badge.present,.badge.approved,.badge.completed,.badge.paid{background:#e5f7ee;color:#13835b}
-.badge.inactive,.badge.late,.badge.planned,.badge.partial{background:#fff1dc;color:#9a6500}
-.badge.absent,.badge.rejected,.badge.cancelled{background:#ffe9e9;color:#c52d39}
-.notice{padding:12px 14px;background:#edf5ff;color:#2854a3;border-radius:8px;font-size:13px;margin:12px 0}
-.notice.error{background:#fff0f0;color:#b32631}.notice.success{background:#e8f8f0;color:#146c48}
-.empty{text-align:center;padding:25px;color:var(--muted);font-size:13px}.hidden{display:none!important}
-.small{font-size:12px;color:var(--muted)}.menu-toggle{display:none}
-@media(max-width:1000px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:720px){.sidebar{transform:translateX(-100%);transition:transform .2s}.sidebar.open{transform:translateX(0)}.main{margin-left:0}.menu-toggle{display:inline-block}.content{padding:14px}.topbar{padding:0 12px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.grid{gap:9px}.card{padding:12px}.stat-number{font-size:22px}}
+:root{--navy:#13213d;--navy2:#1d3158;--blue:#315ee8;--cyan:#15aabf;--bg:#f4f7fb;--ink:#17243a;--muted:#69768a;--line:#e2e8f0;--white:#fff;--green:#13845b;--red:#c43d4b;--amber:#9a6700}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 13px;background:var(--blue);color:#fff;font-weight:650}button.secondary{background:#eaf0ff;color:#2346b9}button.ghost{background:#f0f3f8;color:#26354b}button.danger{background:#b82f40}button:disabled{opacity:.5;cursor:not-allowed}.app{min-height:100vh}.topbar{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5;box-shadow:0 3px 15px #10203a20}.brand{display:flex;gap:11px;align-items:center}.logo{width:40px;height:40px;border-radius:12px;background:#ffffff1c;display:grid;place-items:center;font-size:22px}.brand h1{font-size:17px;margin:0}.brand p{font-size:12px;margin:2px 0 0;color:#d6e1ff}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.top-actions .ghost{background:#ffffff18;color:#fff}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 70px)}aside{background:#fff;border-right:1px solid var(--line);padding:16px 12px}.nav-label{font-size:10px;letter-spacing:1.4px;color:#8994a7;font-weight:800;padding:12px 12px 7px}.nav{display:flex;flex-direction:column;gap:4px}.nav button{display:flex;align-items:center;gap:11px;text-align:left;background:transparent;color:#445168;font-weight:650;padding:11px 12px;border-radius:10px}.nav button.active,.nav button:hover{background:#edf2ff;color:#2349c7}.nav .ico{width:20px;text-align:center;font-size:17px}.side-note{margin:20px 8px 0;padding:12px;border-radius:12px;background:#f5f8fc;color:#657187;font-size:12px}.main{padding:22px;min-width:0}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.page-head h2{margin:0;font-size:24px;letter-spacing:-.5px}.page-head p{margin:5px 0 0;color:var(--muted)}.head-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}.stat,.panel,.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 4px 14px #1b315408}.stat{padding:16px}.stat .label{color:var(--muted);font-size:12px;font-weight:650}.stat .value{font-size:26px;font-weight:800;margin-top:5px;letter-spacing:-.7px}.stat .sub{font-size:11px;color:#8a95a7;margin-top:3px}.panel{padding:17px;margin-bottom:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.panel-head h3{margin:0;font-size:16px}.panel-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:12px;font-weight:700;color:#526078}.field input,.field select,.field textarea,input,select,textarea{border:1px solid #d6deea;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);min-width:0;outline:none}.field input:focus,.field select:focus,.field textarea:focus,input:focus,select:focus,textarea:focus{border-color:#6a8af3;box-shadow:0 0 0 3px #315ee818}.search{flex:1;min-width:200px}.search input{width:100%}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #edf0f5;vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.55px;color:#748197;background:#f8faff;white-space:nowrap}td{font-size:13px}tbody tr:hover{background:#f9fbff}tbody tr:last-child td{border-bottom:0}.person{font-weight:750}.muted{color:var(--muted)}.pill{display:inline-flex;padding:4px 8px;border-radius:30px;font-size:11px;font-weight:750;background:#edf2ff;color:#3152b8}.pill.green{background:#e3f8ef;color:#16734f}.pill.amber{background:#fff3d7;color:#916200}.pill.red{background:#ffeaec;color:#a82b3b}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:6px 9px;font-size:11px}.empty{padding:30px;text-align:center;color:#7a879a}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quick{padding:16px;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:13px;min-height:100px}.quick strong{display:block;font-size:15px;margin-bottom:5px}.quick span{font-weight:400;color:var(--muted);font-size:12px}.quick:hover{border-color:#9eb1fb;background:#f9faff}.notice{padding:11px 13px;border-radius:10px;margin:0 0 14px;font-size:13px}.notice.info{background:#edf5ff;color:#2453a2}.notice.error{background:#fff0f1;color:#a42a3b}.notice.success{background:#e7f8ef;color:#166b4a}.hidden{display:none!important}.modal-backdrop{position:fixed;inset:0;background:#101a2e80;display:grid;place-items:center;padding:15px;z-index:20}.modal{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:17px;padding:20px;box-shadow:0 20px 80px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.modal-head h3{margin:0;font-size:19px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.modal-grid .wide{grid-column:1/-1}.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(140deg,#101d39,#234987)}.login-card{background:#fff;border-radius:20px;padding:27px;width:min(430px,100%);box-shadow:0 20px 70px #0003}.login-card h1{margin:0 0 5px}.login-card p{color:var(--muted);margin:0 0 20px}.login-card .field{margin:12px 0}.login-card button{width:100%;margin-top:8px}.login-mark{font-size:30px;margin-bottom:10px}.status-line{font-size:12px;color:#cbd6ec}.small{font-size:12px}.footer-note{font-size:11px;color:#8792a5;margin-top:12px}.mobile-menu{display:none}
+@media(max-width:900px){.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:8px;position:sticky;top:70px;z-index:4;overflow:auto}.nav{flex-direction:row;min-width:max-content}.nav-label,.side-note{display:none}.nav button{padding:9px 11px}.main{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{padding:12px}.brand h1{font-size:15px}}
+@media(max-width:560px){.topbar{align-items:flex-start}.brand p{max-width:190px}.top-actions button{padding:8px;font-size:12px}.page-head{display:block}.page-head h2{font-size:21px}.head-actions{margin-top:12px}.stats{gap:8px}.stat{padding:12px}.stat .value{font-size:22px}.grid2,.grid3,.modal-grid{grid-template-columns:1fr}.modal-grid .wide{grid-column:auto}.panel{padding:12px}.filters>*{width:100%;flex:auto}.search{min-width:100%}.modal{padding:15px}}
+@media print{.topbar,aside,.head-actions,.filters,.actions,.no-print{display:none!important}.layout{display:block}.main{padding:0}.panel,.stat{box-shadow:none;break-inside:avoid}body{background:#fff}.table-wrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:6px}}
 </style>
 </head>
 <body>
-<aside class="sidebar" id="sidebar">
-  <div class="brand">MY <span>SCHOOL</span><br>SYSTEM</div>
-  <div class="group">OVERVIEW</div>
-  <button class="navbtn active" data-page="dashboard">🏠 Dashboard</button>
-  <button class="navbtn" data-page="school">🏫 School Details</button>
-  <div class="group">PEOPLE</div>
-  <button class="navbtn" data-page="teachers">👨‍🏫 Teachers</button>
-  <button class="navbtn" data-page="students">🎓 Students & Admissions</button>
-  <div class="group">ACADEMICS</div>
-  <button class="navbtn" data-page="classes">📚 Classes</button>
-  <button class="navbtn" data-page="subjects">📖 Subjects</button>
-  <button class="navbtn" data-page="assignments">🔗 Class Assignments</button>
-  <button class="navbtn" data-page="attendance">🗓️ Attendance</button>
-  <button class="navbtn" data-page="exams">📝 Exams</button>
-  <button class="navbtn" data-page="results">📊 Exam Results</button>
-  <div class="group">FINANCE</div>
-  <button class="navbtn" data-page="charges">🧾 Fee Charges</button>
-  <button class="navbtn" data-page="payments">💳 Payments</button>
-  <button class="navbtn" data-page="balances">💰 Fee Balances</button>
-  <div class="group">SYSTEM</div>
-  <button class="navbtn" data-page="reports">📈 Reports</button>
-  <button class="navbtn" data-page="settings">⚙️ Account Settings</button>
-  <button class="navbtn" id="logoutBtn">↪ Sign Out</button>
-</aside>
-
-<main class="main">
-<header class="topbar">
-  <div style="display:flex;align-items:center;gap:10px">
-    <button class="btn light menu-toggle" id="menuToggle">☰</button>
-    <div><strong id="schoolTitle">School Administration</strong><br><span class="small" id="schoolStatus">Checking account…</span></div>
+<div id="loginView" class="login-wrap">
+  <form class="login-card" id="loginForm">
+    <div class="login-mark">🏫</div><h1>My School System</h1><p>School administrator sign in</p>
+    <div id="loginMessage" class="notice hidden"></div>
+    <div class="field"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="admin@school.com"></div>
+    <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter password"></div>
+    <button type="submit" id="loginButton">Sign in</button>
+    <div class="footer-note">Sign in with an account already created in Supabase Authentication. This page does not create or approve accounts.</div>
+  </form>
+</div>
+<div id="appView" class="app hidden">
+  <header class="topbar">
+    <div class="brand"><div class="logo">🏫</div><div><h1>My School System</h1><p id="schoolLabel">School Administration</p></div></div>
+    <div class="top-actions"><span id="signedInLabel" class="status-line"></span><button class="ghost" id="refreshBtn">↻ Refresh</button><button class="ghost" id="logoutBtn">Sign out</button></div>
+  </header>
+  <div class="layout">
+    <aside>
+      <div class="nav-label">SCHOOL WORKSPACE</div>
+      <nav class="nav" id="mainNav">
+        <button class="active" data-page="overview"><span class="ico">▦</span>Overview</button>
+        <button data-page="students"><span class="ico">👨‍🎓</span>Students</button>
+        <button data-page="classes"><span class="ico">🏷️</span>Classes & streams</button>
+        <button data-page="records"><span class="ico">📁</span>Student records</button>
+        <button data-page="exams"><span class="ico">📝</span>Exams & marks</button>
+        <button data-page="teachers"><span class="ico">👩‍🏫</span>Teachers</button>
+        <button data-page="reports"><span class="ico">📊</span>Reports</button>
+        <button data-page="settings"><span class="ico">⚙️</span>Settings & help</button>
+      </nav>
+      <div class="side-note"><strong>Safe editing</strong><br>Use Edit to change a record. Delete actions ask for confirmation. Keep a database backup before making bulk changes.</div>
+    </aside>
+    <main class="main">
+      <div id="globalMessage" class="notice hidden"></div>
+      <section id="page-overview" class="page">
+        <div class="page-head"><div><h2>School overview</h2><p>Quick access to everyday school activities and records.</p></div><div class="head-actions"><button id="addStudentTop">＋ Add student</button><button class="secondary" id="addRecordTop">＋ Add record</button></div></div>
+        <div class="stats">
+          <div class="stat"><div class="label">Registered students</div><div class="value" id="statStudents">—</div><div class="sub">In this school</div></div>
+          <div class="stat"><div class="label">Classes / grades</div><div class="value" id="statClasses">—</div><div class="sub">Class groups configured</div></div>
+          <div class="stat"><div class="label">Streams</div><div class="value" id="statStreams">—</div><div class="sub">Across all classes</div></div>
+          <div class="stat"><div class="label">Saved records</div><div class="value" id="statRecords">—</div><div class="sub">Student records and exam entries</div></div>
+        </div>
+        <div class="grid2">
+          <button class="quick" data-goto="students"><strong>👨‍🎓 Find or register a student</strong><span>Search by name, admission number, class, stream or gender. View and edit student details.</span></button>
+          <button class="quick" data-goto="classes"><strong>🏷️ Organise classes and streams</strong><span>Create a grade/class first, then add multiple streams such as East, West, A or B.</span></button>
+          <button class="quick" data-goto="records"><strong>📁 View school records</strong><span>Find attendance, fees, discipline, health notes and other records stored for students.</span></button>
+          <button class="quick" data-goto="exams"><strong>📝 Exams and marks</strong><span>Set up an exam and record marks. Teacher workflow and assignment controls can be added alongside this.</span></button>
+        </div>
+        <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Recently registered students</h3><p>Latest student profiles available to this school.</p></div><button class="secondary" data-goto="students">View all</button></div><div id="recentStudents" class="table-wrap"></div></div>
+      </section>
+      <section id="page-students" class="page hidden">
+        <div class="page-head"><div><h2>Students</h2><p>Search, view, register, update or remove student profiles.</p></div><div class="head-actions"><button id="addStudentBtn">＋ Register student</button><button class="secondary" id="exportStudentsBtn">Export CSV</button></div></div>
+        <div class="panel">
+          <div class="filters">
+            <div class="field search"><label>Search students</label><input id="studentSearch" placeholder="Name, admission no., phone, guardian…"></div>
+            <div class="field"><label>Class / grade</label><select id="studentClassFilter"><option value="">All classes</option></select></div>
+            <div class="field"><label>Stream</label><select id="studentStreamFilter"><option value="">All streams</option></select></div>
+            <div class="field"><label>Gender</label><select id="studentGenderFilter"><option value="">All genders</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+          </div>
+          <div id="studentTable" class="table-wrap"></div>
+        </div>
+      </section>
+      <section id="page-classes" class="page hidden">
+        <div class="page-head"><div><h2>Classes and streams</h2><p>A grade/class can have several streams. Create the class, then attach any number of streams.</p></div></div>
+        <div class="grid2">
+          <div class="panel"><div class="panel-head"><div><h3>Classes / grades</h3><p>For example: Grade 4, Grade 5, Form 1.</p></div></div>
+            <form id="classForm" class="filters"><div class="field" style="flex:1"><label>Class / grade name</label><input id="classNameInput" required placeholder="e.g. Grade 4"></div><div class="field"><label>Level (optional)</label><input id="classLevelInput" placeholder="e.g. 4"></div><button type="submit">Add class</button></form>
+            <div id="classTable" class="table-wrap"></div>
+          </div>
+          <div class="panel"><div class="panel-head"><div><h3>Streams</h3><p>Streams belong to a class. A class can have many streams.</p></div></div>
+            <form id="streamForm" class="filters"><div class="field" style="flex:1"><label>Class / grade</label><select id="streamClassSelect" required></select></div><div class="field" style="flex:1"><label>Stream name</label><input id="streamNameInput" required placeholder="e.g. East, A, Blue"></div><button type="submit">Add stream</button></form>
+            <div id="streamTable" class="table-wrap"></div>
+          </div>
+        </div>
+        <div class="notice info">Students should be assigned both a class/grade and a stream where applicable. Existing student profiles are not automatically moved; edit the student to update their class or stream.</div>
+      </section>
+      <section id="page-records" class="page hidden">
+        <div class="page-head"><div><h2>Student records</h2><p>Search and manage related records linked to students.</p></div><div class="head-actions"><button id="addRecordBtn">＋ Add student record</button><button class="secondary" id="exportRecordsBtn">Export CSV</button></div></div>
+        <div class="panel"><div class="filters"><div class="field search"><label>Search records</label><input id="recordSearch" placeholder="Student, admission no., record title or type…"></div><div class="field"><label>Record type</label><select id="recordTypeFilter"><option value="">All types</option><option>attendance</option><option>fees</option><option>discipline</option><option>health</option><option>parent_contact</option><option>note</option><option>other</option></select></div></div><div id="recordsTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-exams" class="page hidden">
+        <div class="page-head"><div><h2>Exams and marks</h2><p>Create examinations, record student marks and review saved entries.</p></div><div class="head-actions"><button id="addExamBtn">＋ Create exam</button><button class="secondary" id="addMarkBtn">＋ Enter marks</button></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Examinations</h3><p>Exams are stored separately from individual student marks.</p></div></div><div id="examsTable" class="table-wrap"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Marks register</h3><p>Use a student, exam, subject, marks scored and maximum marks.</p></div><button class="secondary" id="exportMarksBtn">Export CSV</button></div><div class="filters"><div class="field search"><label>Search marks</label><input id="marksSearch" placeholder="Student, exam or subject…"></div></div><div id="marksTable" class="table-wrap"></div></div>
+        <div class="notice info">This basic administrator marks register uses the new MSYS tables in the SQL file below. Teacher accounts and subject/class assignments need authenticated teacher profiles and explicit assignment permissions before teacher entry is enabled.</div>
+      </section>
+      <section id="page-teachers" class="page hidden">
+        <div class="page-head"><div><h2>Teachers</h2><p>Teacher records and account status.</p></div><button id="addTeacherBtn">＋ Add teacher record</button></div>
+        <div class="panel"><div class="notice info">This section manages teacher directory records. Supabase Authentication registration, account approval and subject/class assignment should be secured using database policies; do not store plain-text passwords in a table.</div><div id="teachersTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-reports" class="page hidden">
+        <div class="page-head"><div><h2>Reports</h2><p>Quick summaries of student records and examination performance.</p></div><div class="head-actions"><button class="secondary" id="printReportsBtn">Print page</button></div></div>
+        <div class="stats"><div class="stat"><div class="label">Male students</div><div class="value" id="reportMale">—</div></div><div class="stat"><div class="label">Female students</div><div class="value" id="reportFemale">—</div></div><div class="stat"><div class="label">Students with marks</div><div class="value" id="reportMarked">—</div></div><div class="stat"><div class="label">Average marks %</div><div class="value" id="reportAverage">—</div></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Students by class and stream</h3><p>Counts update from the current student directory.</p></div><button class="secondary" id="exportClassSummary">Export CSV</button></div><div id="classSummaryTable" class="table-wrap"></div></div>
+        <div class="panel"><div class="panel-head"><div><h3>Subject performance</h3><p>Based on marks stored in the new marks register.</p></div></div><div id="subjectSummaryTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-settings" class="page hidden">
+        <div class="page-head"><div><h2>Settings and help</h2><p>Connection details, data safety and common setup checks.</p></div></div>
+        <div class="panel"><h3>Current connection</h3><p class="muted">Supabase URL: <strong id="connectionUrl"></strong></p><p class="muted">Signed-in account: <strong id="connectionUser"></strong></p><p class="muted">School ID: <strong id="connectionSchool"></strong></p><div id="connectionStatus" class="notice info">Checking database connection…</div><button id="testConnectionBtn" class="secondary">Test connection</button></div>
+        <div class="panel"><h3>Important notes</h3><ul><li>Run the supplied SQL in Supabase SQL Editor before using Classes & streams, Exams & marks, or Teacher directory.</li><li>Back up your database before changing existing student fields.</li><li>Use Supabase Auth; never store passwords in the school tables.</li><li>RLS policies must be tested with separate school accounts before real student data is entered.</li><li>This page uses your existing <code>msys_students</code>, <code>msys_schools</code>, <code>msys_user_profiles</code> and <code>msys_student_records</code> tables. Student field names can differ between installations; see the compatibility note below if loading students fails.</li></ul></div>
+      </section>
+    </main>
   </div>
-  <div style="text-align:right"><strong id="adminName">Administrator</strong><br><span class="small" id="adminEmail"></span></div>
-</header>
-<section class="content">
-  <div id="message" class="hidden"></div>
-  <div id="app"><div class="panel">Loading school system…</div></div>
-  <p class="small">My School System · Secure school administration</p>
-</section>
-</main>
-
+</div>
+<div id="modalRoot" class="hidden"></div>
 <script>
 (() => {
-"use strict";
-const URL="https://ksidteqtztpfgirfumdz.supabase.co";
-const KEY="sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs";
-const db=window.supabase.createClient(URL,KEY);
-const $=id=>document.getElementById(id);
-const app=$("app");
-let user=null,profile=null,school=null,page="dashboard";
-let cache={teachers:[],students:[],classes:[],subjects:[],exams:[],charges:[],payments:[],attendance:[],results:[]};
-
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const today=()=>new Date().toISOString().slice(0,10);
-const money=v=>"KES "+Number(v||0).toLocaleString("en-KE",{minimumFractionDigits:2,maximumFractionDigits:2});
-function msg(t,type="info"){const e=$("message");e.className="notice"+(type==="error"?" error":type==="success"?" success":"");e.textContent=t;window.scrollTo({top:0,behavior:"smooth"});}
-function clearMsg(){$("message").classList.add("hidden");}
-function badge(s){s=s||"unknown";return `<span class="badge ${esc(s).toLowerCase()}">${esc(s)}</span>`;}
-function header(t,s){return `<h1 class="page-title">${esc(t)}</h1><p class="subtitle">${esc(s)}</p>`;}
-function field(label,name,opts={}) {
- const type=opts.type||"text",required=opts.required?"required":"",value=opts.value??"",placeholder=opts.placeholder||"";
- if(opts.options){return `<div class="field"><label>${esc(label)}${opts.required?" *":""}</label><select name="${esc(name)}" ${required}>${opts.options.map(o=>`<option value="${esc(o.value)}" ${String(o.value)===String(value)?"selected":""}>${esc(o.label)}</option>`).join("")}</select></div>`;}
- return `<div class="field ${opts.full?"full":""}"><label>${esc(label)}${opts.required?" *":""}</label><input name="${esc(name)}" type="${esc(type)}" value="${esc(value)}" placeholder="${esc(placeholder)}" ${required} ${opts.min!==undefined?`min="${opts.min}"`:""} ${opts.step?`step="${opts.step}"`:""} ${opts.maxlength?`maxlength="${opts.maxlength}"`:""}></div>`;
-}
-function selectOptions(rows,labelFn,empty="Select..."){return [{value:"",label:empty},...rows.map(r=>({value:r.id,label:labelFn(r)}))];}
-function formPanel(title,id,fields,button="Save Record"){
- return `<div class="panel"><div class="panel-head"><h3>${esc(title)}</h3></div><form id="${id}"><div class="form-grid">${fields.join("")}</div><div class="actions"><button class="btn primary" type="submit">${esc(button)}</button><button class="btn light" type="reset">Clear</button></div></form></div>`;
-}
-function tableHTML(columns,rows,empty="No records found."){
- if(!rows.length)return `<div class="empty">${esc(empty)}</div>`;
- return `<div class="table-wrap"><table><thead><tr>${columns.map(c=>`<th>${esc(c.label)}</th>`).join("")}</tr></thead><tbody>${rows.map(row=>`<tr>${columns.map(c=>`<td>${c.render?c.render(row):esc(row[c.key])}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
-}
-function listPanel(title,id,columns,rows,empty){return `<div class="panel"><div class="panel-head"><h3>${esc(title)}</h3><button class="btn light" onclick="refreshPage()">↻ Refresh</button></div><div id="${id}">${tableHTML(columns,rows,empty)}</div></div>`;}
-function canManage(){return profile?.role==="school_admin"&&profile?.status==="active"&&school?.status==="approved";}
-function sid(){return profile.school_id;}
-
-async function init(){
- if(!window.supabase){app.innerHTML="Supabase library failed to load.";return;}
- const {data:{session},error}=await db.auth.getSession();
- if(error){app.textContent=error.message;return;}
- if(!session){location.href="school-login.html";return;}
- user=session.user;
- const p=await db.from("msys_user_profiles").select("*").eq("id",user.id).maybeSingle();
- if(p.error){app.innerHTML=`<div class="panel">Profile error: ${esc(p.error.message)}</div>`;return;}
- profile=p.data;
- if(!profile){app.innerHTML="<div class='panel'>Your account profile was not found. Contact the developer.</div>";return;}
- if(profile.role!=="school_admin"){
-   if(profile.role==="developer"&&profile.status==="active"){location.href="developer.html";return;}
-   app.innerHTML="<div class='panel'>This page is only for school administrators.</div>";return;
- }
- if(profile.status!=="active"||!profile.school_id){
-   app.innerHTML=`<div class="panel"><h3>Account not active</h3><p>Your account is ${esc(profile.status)} or has no linked school. Contact the developer.</p><button class="btn dark" onclick="signOut()">Sign out</button></div>`;return;
- }
- const s=await db.from("msys_schools").select("*").eq("id",profile.school_id).maybeSingle();
- if(s.error||!s.data){app.innerHTML=`<div class="panel">School record error: ${esc(s.error?.message||"School not found")}</div>`;return;}
- school=s.data;
- $("schoolTitle").textContent=school.name;
- $("schoolStatus").textContent="School status: "+school.status;
- $("adminName").textContent=profile.full_name||profile.username||"Administrator";
- $("adminEmail").textContent=user.email||profile.phone||"";
- if(school.status!=="approved"){app.innerHTML=`<div class="panel"><h2>School ${esc(school.status)}</h2><p>Your school must be approved before school records can be managed.</p><button class="btn dark" onclick="signOut()">Sign out</button></div>`;return;}
- document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
- $("menuToggle").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
- $("logoutBtn").addEventListener("click",signOut);
- await go("dashboard");
-}
-const titles={
- dashboard:"Dashboard",school:"School Details",teachers:"Teachers",students:"Students",
- classes:"Classes",subjects:"Subjects",assignments:"Class Assignments",attendance:"Attendance",
- exams:"Exams",results:"Exam Results",charges:"Fee Charges",payments:"Payments",
- balances:"Fee Balances",reports:"Reports",settings:"Account Settings"
-};
-window.go=async function(p){
- if(!canManage()){msg("Your account or school is no longer approved.","error");return;}
- page=p;clearMsg();
- document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===p));
- $("sidebar").classList.remove("open");
- const funcs={dashboard:dashboardPage,school:schoolPage,teachers:teachersPage,students:studentsPage,classes:classesPage,subjects:subjectsPage,assignments:assignmentsPage,attendance:attendancePage,exams:examsPage,results:resultsPage,charges:chargesPage,payments:paymentsPage,balances:balancesPage,reports:reportsPage,settings:settingsPage};
- await (funcs[p]||dashboardPage)();
-};
-window.refreshPage=()=>go(page);
-async function fetchRows(table,order="created_at",ascending=false){
- const r=await db.from(table).select("*").eq("school_id",sid()).order(order,{ascending}).limit(1000);
- if(r.error)throw r.error;return r.data||[];
-}
-async function safeFetch(table,order){try{return await fetchRows(table,order);}catch(e){msg("Could not load "+table+": "+e.message,"error");return [];}}
-async function insert(table,row){const r=await db.from(table).insert(row);if(r.error)throw r.error;}
-async function update(table,id,row){const r=await db.from(table).update(row).eq("id",id).eq("school_id",sid());if(r.error)throw r.error;}
-function fail(e){msg("Operation failed: "+(e.message||e),"error");}
-function saved(t){msg(t+" saved successfully.","success");}
-
-async function dashboardPage(){
- app.innerHTML=header("School Dashboard","Welcome to your school administration workspace.")+
- `<div class="grid">${[
- ["🏫","School",school.name],["👨‍🏫","Teachers","…"],["🎓","Students","…"],["📚","Classes","…"]
- ].map((x,i)=>`<div class="card"><div style="font-size:22px">${x[0]}</div><p class="stat-label">${x[1]}</p><div class="stat-number" id="stat${i}">${esc(x[2])}</div></div>`).join("")}</div>
- <div class="panel"><h3>Quick Actions</h3><div class="actions">
- <button class="btn primary" onclick="go('teachers')">Register Teacher</button>
- <button class="btn primary" onclick="go('students')">Admit Student</button>
- <button class="btn light" onclick="go('attendance')">Record Attendance</button>
- <button class="btn light" onclick="go('charges')">Add Fee Charge</button>
- <button class="btn light" onclick="go('exams')">Create Exam</button>
- </div></div>
- <div class="panel"><h3>School Information</h3><br>${tableHTML([{label:"School",key:"name"},{label:"Registration No.",key:"registration_number"},{label:"County",key:"county"},{label:"Status",render:r=>badge(r.status)}],[school])}</div>`;
- for(const [i,t] of [[1,"msys_teachers"],[2,"msys_students"],[3,"msys_classes"]]){
-  const r=await db.from(t).select("id",{count:"exact",head:true}).eq("school_id",sid());
-  const el=$("stat"+i);if(el)el.textContent=r.error?"—":r.count??0;
- }
-}
-
-function schoolPage(){
- app.innerHTML=header("School Details","View your registered school information.")+
- `<div class="panel"><h3>Registered Details</h3><br>${tableHTML([
- {label:"School Name",key:"name"},{label:"Registration Number",key:"registration_number"},
- {label:"County",key:"county"},{label:"Address",key:"address"},
- {label:"Phone",key:"phone"},{label:"Contact Email",key:"contact_email"},
- {label:"Approval Status",render:r=>badge(r.status)}
- ],[school])}<div class="notice">For official changes to your school registration details, contact the system developer.</div></div>`;
-}
-
-async function teachersPage(){
- const data=await safeFetch("msys_teachers");cache.teachers=data;
- app.innerHTML=header("Teacher Management","Register teachers and maintain staff records.")+
- formPanel("Register Teacher","teacherForm",[
- field("Full Name","full_name",{required:true}),field("Teacher Number","teacher_number",{required:true}),
- field("Email","email",{type:"email"}),field("Phone","phone"),field("Subject","subject"),
- field("Employment Date","employment_date",{type:"date"})
- ])+listPanel("Teacher Register","teacherList",[
- {label:"Name",key:"full_name"},{label:"Teacher No.",key:"teacher_number"},
- {label:"Phone",key:"phone"},{label:"Subject",key:"subject"},{label:"Status",render:r=>badge(r.status)},
- {label:"Action",render:r=>`<button class="btn ${r.status==="active"?"danger":"success"}" onclick="toggleStatus('msys_teachers','${r.id}','${r.status==="active"?"inactive":"active"}')">${r.status==="active"?"Deactivate":"Activate"}</button>`}
- ],data);
- $("teacherForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target);
-  try{await insert("msys_teachers",{school_id:sid(),full_name:f.get("full_name").trim(),teacher_number:f.get("teacher_number").trim(),email:f.get("email")||null,phone:f.get("phone")||null,subject:f.get("subject")||null,employment_date:f.get("employment_date")||null,status:"active",created_by:user.id});saved("Teacher");await go("teachers");}
-  catch(err){fail(err);}
- };
-}
-
-async function studentsPage(){
- const data=await safeFetch("msys_students");cache.students=data;
- app.innerHTML=header("Students & Admissions","Register students and manage admission records.")+
- formPanel("Admit Student","studentForm",[
- field("Full Name","full_name",{required:true}),field("Admission Number","admission_number",{required:true}),
- field("Gender","gender",{options:[{value:"",label:"Select gender"},{value:"Male",label:"Male"},{value:"Female",label:"Female"},{value:"Other",label:"Other"}]}),
- field("Date of Birth","date_of_birth",{type:"date"}),field("Class / Grade","class_name"),
- field("Admission Date","admission_date",{type:"date",value:today()}),field("Guardian Name","guardian_name"),
- field("Guardian Phone","guardian_phone"),field("Guardian Email","guardian_email",{type:"email"})
- ])+listPanel("Student Register","studentList",[
- {label:"Student",key:"full_name"},{label:"Admission No.",key:"admission_number"},
- {label:"Class",key:"class_name"},{label:"Guardian",key:"guardian_name"},
- {label:"Guardian Phone",key:"guardian_phone"},{label:"Status",render:r=>badge(r.status)},
- {label:"Action",render:r=>`<button class="btn ${r.status==="active"?"danger":"success"}" onclick="toggleStatus('msys_students','${r.id}','${r.status==="active"?"inactive":"active"}')">${r.status==="active"?"Deactivate":"Activate"}</button>`}
- ],data);
- $("studentForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target);
-  try{await insert("msys_students",{school_id:sid(),full_name:f.get("full_name").trim(),admission_number:f.get("admission_number").trim(),gender:f.get("gender")||null,date_of_birth:f.get("date_of_birth")||null,class_name:f.get("class_name")||null,admission_date:f.get("admission_date")||today(),guardian_name:f.get("guardian_name")||null,guardian_phone:f.get("guardian_phone")||null,guardian_email:f.get("guardian_email")||null,status:"active",created_by:user.id});saved("Student");await go("students");}
-  catch(err){fail(err);}
- };
-}
-window.toggleStatus=async(table,id,status)=>{
- try{await update(table,id,{status,updated_at:new Date().toISOString()});saved("Status");await go(page);}catch(e){fail(e);}
-};
-
-async function classesPage(){
- const data=await safeFetch("msys_classes","name");cache.classes=data;
- app.innerHTML=header("Classes","Create the classes and streams in your school.")+
- formPanel("Add Class","classForm",[
- field("Class / Grade Name","name",{required:true}),field("Stream","stream"),
- field("Academic Year","academic_year",{placeholder:"e.g. 2026"})
- ])+listPanel("Classes","classList",[
- {label:"Class",key:"name"},{label:"Stream",key:"stream"},{label:"Academic Year",key:"academic_year"},{label:"Status",render:r=>badge(r.status)}
- ],data);
- $("classForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await insert("msys_classes",{school_id:sid(),name:f.get("name").trim(),stream:f.get("stream")||null,academic_year:f.get("academic_year")||null,status:"active",created_by:user.id});saved("Class");await go("classes");}catch(err){fail(err);}};
-}
-async function subjectsPage(){
- const data=await safeFetch("msys_subjects","name");cache.subjects=data;
- app.innerHTML=header("Subjects","Manage the subjects taught at your school.")+
- formPanel("Add Subject","subjectForm",[field("Subject Name","name",{required:true}),field("Subject Code","subject_code")])+
- listPanel("Subjects","subjectList",[{label:"Subject",key:"name"},{label:"Code",key:"subject_code"},{label:"Status",render:r=>badge(r.status)}],data);
- $("subjectForm").onsubmit=async e=>{e.preventDefault();const f=new FormData(e.target);try{await insert("msys_subjects",{school_id:sid(),name:f.get("name").trim(),subject_code:f.get("subject_code")||null,status:"active",created_by:user.id});saved("Subject");await go("subjects");}catch(err){fail(err);}};
-}
-
-async function assignmentsPage(){
- const [classes,subjects,teachers,assignments]=await Promise.all([
- safeFetch("msys_classes","name"),safeFetch("msys_subjects","name"),safeFetch("msys_teachers","full_name"),safeFetch("msys_class_subjects")
- ]);
- cache.classes=classes;cache.subjects=subjects;cache.teachers=teachers;
- const className=id=>classes.find(x=>x.id===id)?.name||"Unknown";
- const subjectName=id=>subjects.find(x=>x.id===id)?.name||"Unknown";
- const teacherName=id=>teachers.find(x=>x.id===id)?.full_name||"Not assigned";
- app.innerHTML=header("Class Assignments","Assign subjects and teachers to classes.")+
- formPanel("Assign Subject and Teacher","assignmentForm",[
- field("Class","class_id",{required:true,options:selectOptions(classes,x=>x.name)}),
- field("Subject","subject_id",{required:true,options:selectOptions(subjects,x=>x.name)}),
- field("Teacher","teacher_id",{options:selectOptions(teachers,x=>x.full_name,"No teacher assigned")})
- ])+listPanel("Assignments","assignmentList",[
- {label:"Class",render:r=>esc(className(r.class_id))},{label:"Subject",render:r=>esc(subjectName(r.subject_id))},
- {label:"Teacher",render:r=>esc(teacherName(r.teacher_id))}
- ],assignments);
- $("assignmentForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target);
-  try{await insert("msys_class_subjects",{school_id:sid(),class_id:f.get("class_id"),subject_id:f.get("subject_id"),teacher_id:f.get("teacher_id")||null,created_by:user.id});saved("Assignment");await go("assignments");}catch(err){fail(err);}
- };
-}
-
-async function attendancePage(){
- const [students,classes,records]=await Promise.all([safeFetch("msys_students","full_name"),safeFetch("msys_classes","name"),safeFetch("msys_attendance","attendance_date")]);
- cache.students=students;cache.classes=classes;cache.attendance=records;
- app.innerHTML=header("Attendance","Record and review student attendance by date.")+
- formPanel("Record Attendance","attendanceForm",[
- field("Student","student_id",{required:true,options:selectOptions(students,x=>x.full_name+" ("+x.admission_number+")")}),
- field("Class","class_id",{options:selectOptions(classes,x=>x.name,"Select class (optional)")}),
- field("Date","attendance_date",{type:"date",required:true,value:today()}),
- field("Status","status",{required:true,options:["present","absent","late","excused"].map(x=>({value:x,label:x[0].toUpperCase()+x.slice(1)}))}),
- field("Remarks","remarks")
- ])+listPanel("Attendance Register","attendanceList",[
- {label:"Date",key:"attendance_date"},{label:"Student",render:r=>esc(students.find(s=>s.id===r.student_id)?.full_name||"Unknown")},
- {label:"Status",render:r=>badge(r.status)},{label:"Remarks",key:"remarks"}
- ],records);
- $("attendanceForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target),student=students.find(s=>s.id===f.get("student_id"));
-  if(!student){msg("Select a valid student.","error");return;}
-  try{await insert("msys_attendance",{school_id:sid(),student_id:student.id,class_id:f.get("class_id")||null,attendance_date:f.get("attendance_date"),status:f.get("status"),remarks:f.get("remarks")||null,recorded_by:user.id});saved("Attendance");await go("attendance");}
-  catch(err){fail(err);}
- };
-}
-
-async function examsPage(){
- const data=await safeFetch("msys_exams","created_at");cache.exams=data;
- app.innerHTML=header("Exams","Create examinations and manage examination dates.")+
- formPanel("Create Exam","examForm",[
- field("Exam Name","name",{required:true}),field("Academic Year","academic_year",{required:true,placeholder:"e.g. 2026"}),
- field("Term","term",{placeholder:"e.g. Term 1"}),field("Start Date","start_date",{type:"date"}),
- field("End Date","end_date",{type:"date"}),field("Status","status",{options:["planned","ongoing","completed","cancelled"].map(x=>({value:x,label:x}))})
- ])+listPanel("Examinations","examList",[
- {label:"Exam",key:"name"},{label:"Year",key:"academic_year"},{label:"Term",key:"term"},
- {label:"Start",key:"start_date"},{label:"End",key:"end_date"},{label:"Status",render:r=>badge(r.status)}
- ],data);
- $("examForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target);
-  try{await insert("msys_exams",{school_id:sid(),name:f.get("name").trim(),academic_year:f.get("academic_year").trim(),term:f.get("term")||null,start_date:f.get("start_date")||null,end_date:f.get("end_date")||null,status:f.get("status")||"planned",created_by:user.id});saved("Exam");await go("exams");}catch(err){fail(err);}
- };
-}
-
-async function resultsPage(){
- const [exams,students,subjects,results]=await Promise.all([safeFetch("msys_exams"),safeFetch("msys_students","full_name"),safeFetch("msys_subjects","name"),safeFetch("msys_exam_results")]);
- cache.exams=exams;cache.students=students;cache.subjects=subjects;cache.results=results;
- app.innerHTML=header("Exam Results","Record marks for each student, exam and subject.")+
- formPanel("Enter Student Marks","resultForm",[
- field("Exam","exam_id",{required:true,options:selectOptions(exams,x=>x.name+" ("+x.academic_year+")")}),
- field("Student","student_id",{required:true,options:selectOptions(students,x=>x.full_name+" ("+x.admission_number+")")}),
- field("Subject","subject_id",{required:true,options:selectOptions(subjects,x=>x.name)}),
- field("Marks Obtained","marks",{type:"number",required:true,min:0,step:"0.01"}),
- field("Maximum Marks","maximum_marks",{type:"number",required:true,min:0.01,step:"0.01",value:"100"}),
- field("Remarks","remarks")
- ])+listPanel("Results","resultList",[
- {label:"Exam",render:r=>esc(exams.find(x=>x.id===r.exam_id)?.name||"Unknown")},
- {label:"Student",render:r=>esc(students.find(x=>x.id===r.student_id)?.full_name||"Unknown")},
- {label:"Subject",render:r=>esc(subjects.find(x=>x.id===r.subject_id)?.name||"Unknown")},
- {label:"Marks",render:r=>esc(r.marks)+" / "+esc(r.maximum_marks)},
- {label:"Percentage",render:r=>Number(r.marks/r.maximum_marks*100).toFixed(1)+"%"},
- {label:"Remarks",key:"remarks"}
- ],results);
- $("resultForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target),marks=Number(f.get("marks")),max=Number(f.get("maximum_marks"));
-  if(marks<0||max<=0||marks>max){msg("Marks must be between zero and the maximum marks.","error");return;}
-  try{await insert("msys_exam_results",{school_id:sid(),exam_id:f.get("exam_id"),student_id:f.get("student_id"),subject_id:f.get("subject_id"),marks,maximum_marks:max,remarks:f.get("remarks")||null,recorded_by:user.id});saved("Result");await go("results");}catch(err){fail(err);}
- };
-}
-
-async function chargesPage(){
- const [students,charges]=await Promise.all([safeFetch("msys_students","full_name"),safeFetch("msys_fee_charges")]);
- cache.students=students;cache.charges=charges;
- app.innerHTML=header("Fee Charges","Create fee charges for individual students.")+
- formPanel("Add Fee Charge","chargeForm",[
- field("Student","student_id",{required:true,options:selectOptions(students,x=>x.full_name+" ("+x.admission_number+")")}),
- field("Description","description",{required:true,placeholder:"e.g. Tuition fee"}),
- field("Amount (KES)","amount",{type:"number",required:true,min:0,step:"0.01"}),
- field("Term","term",{required:true,placeholder:"e.g. Term 1"}),
- field("Academic Year","academic_year",{required:true,placeholder:"e.g. 2026"}),
- field("Due Date","due_date",{type:"date"})
- ])+listPanel("Fee Charges","chargeList",[
- {label:"Student",render:r=>esc(students.find(s=>s.id===r.student_id)?.full_name||"Unknown")},
- {label:"Description",key:"description"},{label:"Term",key:"term"},{label:"Year",key:"academic_year"},
- {label:"Amount",render:r=>money(r.amount)},{label:"Due Date",key:"due_date"}
- ],charges);
- $("chargeForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target),amount=Number(f.get("amount"));
-  if(amount<0){msg("Amount cannot be negative.","error");return;}
-  try{await insert("msys_fee_charges",{school_id:sid(),student_id:f.get("student_id"),description:f.get("description").trim(),amount,term:f.get("term").trim(),academic_year:f.get("academic_year").trim(),due_date:f.get("due_date")||null,created_by:user.id});saved("Fee charge");await go("charges");}catch(err){fail(err);}
- };
-}
-
-async function paymentsPage(){
- const [students,charges,payments]=await Promise.all([safeFetch("msys_students","full_name"),safeFetch("msys_fee_charges"),safeFetch("msys_fee_payments")]);
- cache.students=students;cache.charges=charges;cache.payments=payments;
- app.innerHTML=header("Fee Payments","Record payments received from students.")+
- formPanel("Record Payment","paymentForm",[
- field("Student","student_id",{required:true,options:selectOptions(students,x=>x.full_name+" ("+x.admission_number+")")}),
- field("Fee Charge","fee_charge_id",{options:selectOptions(charges,x=>x.description+" — "+money(x.amount),"Unallocated payment")}),
- field("Amount (KES)","amount",{type:"number",required:true,min:0.01,step:"0.01"}),
- field("Payment Method","payment_method",{required:true,options:["cash","bank","mobile_money","cheque","other"].map(x=>({value:x,label:x.replace("_"," ")}))}),
- field("Reference Number","reference_number"),field("Payment Date","payment_date",{type:"date",required:true,value:today()}),
- field("Notes","notes")
- ])+listPanel("Payment Register","paymentList",[
- {label:"Date",key:"payment_date"},{label:"Student",render:r=>esc(students.find(s=>s.id===r.student_id)?.full_name||"Unknown")},
- {label:"Amount",render:r=>money(r.amount)},{label:"Method",key:"payment_method"},{label:"Reference",key:"reference_number"}
- ],payments);
- $("paymentForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target),student=students.find(s=>s.id===f.get("student_id")),charge=charges.find(c=>c.id===f.get("fee_charge_id"));
-  if(!student){msg("Select a valid student.","error");return;}
-  if(charge&&charge.student_id!==student.id){msg("The selected fee charge belongs to a different student.","error");return;}
-  const amount=Number(f.get("amount"));if(amount<=0){msg("Payment must be greater than zero.","error");return;}
-  try{await insert("msys_fee_payments",{school_id:sid(),student_id:student.id,fee_charge_id:charge?.id||null,amount,payment_method:f.get("payment_method"),reference_number:f.get("reference_number")||null,payment_date:f.get("payment_date"),notes:f.get("notes")||null,received_by:user.id});saved("Payment");await go("payments");}catch(err){fail(err);}
- };
-}
-
-async function balancesPage(){
- const [students,charges,payments]=await Promise.all([safeFetch("msys_students","full_name"),safeFetch("msys_fee_charges"),safeFetch("msys_fee_payments")]);
- const rows=students.map(s=>{
-  const charged=charges.filter(c=>c.student_id===s.id).reduce((n,c)=>n+Number(c.amount),0);
-  const paid=payments.filter(p=>p.student_id===s.id).reduce((n,p)=>n+Number(p.amount),0);
-  return {name:s.full_name,admission_number:s.admission_number,charged,paid,balance:charged-paid};
- });
- app.innerHTML=header("Fee Balances","Compare total charges with recorded payments.")+
- `<div class="grid"><div class="card"><div class="stat-label">Total Charges</div><div class="stat-number">${money(charges.reduce((n,x)=>n+Number(x.amount),0))}</div></div><div class="card"><div class="stat-label">Total Payments</div><div class="stat-number">${money(payments.reduce((n,x)=>n+Number(x.amount),0))}</div></div><div class="card"><div class="stat-label">Outstanding Balance</div><div class="stat-number">${money(charges.reduce((n,x)=>n+Number(x.amount),0)-payments.reduce((n,x)=>n+Number(x.amount),0))}</div></div><div class="card"><div class="stat-label">Students</div><div class="stat-number">${students.length}</div></div></div>`+
- listPanel("Student Balances","balanceList",[
- {label:"Student",key:"name"},{label:"Admission No.",key:"admission_number"},
- {label:"Total Charged",render:r=>money(r.charged)},{label:"Total Paid",render:r=>money(r.paid)},
- {label:"Balance",render:r=>`<strong>${money(r.balance)}</strong>`}
- ],rows);
-}
-
-async function reportsPage(){
- const [teachers,students,classes,subjects,attendance,charges,payments,exams,results]=await Promise.all([
- safeFetch("msys_teachers"),safeFetch("msys_students"),safeFetch("msys_classes"),safeFetch("msys_subjects"),
- safeFetch("msys_attendance"),safeFetch("msys_fee_charges"),safeFetch("msys_fee_payments"),safeFetch("msys_exams"),safeFetch("msys_exam_results")
- ]);
- const totalCharges=charges.reduce((n,x)=>n+Number(x.amount),0),totalPayments=payments.reduce((n,x)=>n+Number(x.amount),0);
- app.innerHTML=header("School Reports","Current summary of records saved in the school database.")+
- `<div class="grid">${[
- ["Active Teachers",teachers.filter(x=>x.status==="active").length],
- ["Active Students",students.filter(x=>x.status==="active").length],
- ["Classes",classes.length],["Subjects",subjects.length],
- ["Attendance Records",attendance.length],["Examinations",exams.length],
- ["Results Entered",results.length],["Outstanding Fees",money(totalCharges-totalPayments)]
- ].map(x=>`<div class="card"><div class="stat-label">${esc(x[0])}</div><div class="stat-number">${esc(x[1])}</div></div>`).join("")}</div>
- <div class="panel"><h3>Financial Summary</h3><br>${tableHTML([{label:"Total Fees Charged",render:r=>money(r.charged)},{label:"Total Payments Received",render:r=>money(r.paid)},{label:"Outstanding",render:r=>money(r.balance)}],[{charged:totalCharges,paid:totalPayments,balance:totalCharges-totalPayments}])}</div>
- <button class="btn primary" onclick="window.print()">Print / Save Report</button>
- <p class="small">Reports are based on the records currently visible to your school administrator account.</p>`;
-}
-
-function settingsPage(){
- app.innerHTML=header("Account Settings","Review account details and change your password.")+
- `<div class="panel"><h3>Account Information</h3><br>${tableHTML([
- {label:"Full Name",key:"full_name"},{label:"Username",key:"username"},
- {label:"Email",render:()=>esc(user.email||"")},{label:"Role",key:"role"},{label:"Account Status",render:r=>badge(r.status)}
- ],[profile])}</div>
- <div class="panel"><h3>Change Password</h3><br><form id="passwordForm"><div class="form-grid">
- ${field("New Password","password",{type:"password",required:true})}
- ${field("Confirm Password","confirm",{type:"password",required:true})}
- </div><div class="actions"><button class="btn primary" type="submit">Update Password</button></div></form>
- <p class="small">Use at least 8 characters.</p></div>`;
- $("passwordForm").onsubmit=async e=>{
-  e.preventDefault();const f=new FormData(e.target),p=f.get("password");
-  if(String(p).length<8){msg("Use at least 8 characters.","error");return;}
-  if(p!==f.get("confirm")){msg("Passwords do not match.","error");return;}
-  const r=await db.auth.updateUser({password:String(p)});
-  if(r.error){fail(r.error);return;}saved("Password");e.target.reset();
- };
-}
-window.signOut=async()=>{
- const {error}=await db.auth.signOut();
- if(error){fail(error);return;}location.href="school-login.html";
-};
-db.auth.onAuthStateChange((event)=>{if(event==="SIGNED_OUT"&&!location.pathname.endsWith("school-login.html"))location.href="school-login.html";});
+'use strict';
+const SUPABASE_URL = 'https://ksidteqtztpfgirfumdz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs';
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const $ = id => document.getElementById(id);
+const state = { user:null, profile:null, schoolId:null, schoolName:'School Administration', students:[], classes:[], streams:[], records:[], exams:[], marks:[], teachers:[], page:'overview' };
+const TABLES = { students:'msys_students', profiles:'msys_user_profiles', schools:'msys_schools', records:'msys_student_records', classes:'msys_classes', streams:'msys_streams', exams:'msys_exams', marks:'msys_exam_marks', teachers:'msys_teacher_directory' };
+function esc(v){return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function norm(v){return String(v??'').trim();}
+function first(obj, keys, fallback=''){for(const k of keys){if(obj && obj[k]!==undefined && obj[k]!==null && obj[k]!=='') return obj[k];}return fallback;}
+function studentName(s){return norm(first(s,['full_name','student_name','name'])) || [first(s,['first_name','firstname']),first(s,['middle_name']),first(s,['last_name','surname','lastname'])].filter(Boolean).join(' ') || 'Unnamed student';}
+function studentAdmission(s){return norm(first(s,['admission_number','admission_no','adm_no','student_number','registration_number'],'—'));}
+function studentClass(s){return norm(first(s,['class_name','grade','class','class_grade'],'—'));}
+function studentStream(s){return norm(first(s,['stream_name','stream'],'—'));}
+function studentGender(s){return norm(first(s,['gender','sex'],'—'));}
+function notify(message,type='info'){const el=$('globalMessage');el.className='notice '+type;el.textContent=message;el.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>el.classList.add('hidden'),6500);}
+function loginNotice(message,type='error'){const el=$('loginMessage');el.className='notice '+type;el.textContent=message;el.classList.remove('hidden');}
+function showPage(page){state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('#mainNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='reports')renderReports();if(page==='students')renderStudents();if(page==='records')renderRecords();if(page==='classes')renderClasses();if(page==='exams')renderExams();if(page==='teachers')renderTeachers();}
+function tableEmpty(message){return `<div class="empty">${esc(message)}</div>`;}
+function makeTable(headers,rows,empty='No records found'){if(!rows.length)return tableEmpty(empty);return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;}
+function studentOptions(selected=''){return `<option value="">Select student</option>`+state.students.map(s=>`<option value="${esc(s.id)}" ${String(s.id)===String(selected)?'selected':''}>${esc(studentAdmission(s))} — ${esc(studentName(s))}</option>`).join('');}
+function classOptions(selected=''){return `<option value="">Select class / grade</option>`+state.classes.map(c=>`<option value="${esc(c.id)}" ${String(c.id)===String(selected)?'selected':''}>${esc(c.name)}</option>`).join('');}
+function streamOptions(selected='',classId=''){return `<option value="">Select stream (optional)</option>`+state.streams.filter(s=>!classId||String(s.class_id)===String(classId)).map(s=>`<option value="${esc(s.id)}" ${String(s.id)===String(selected)?'selected':''}>${esc((state.classes.find(c=>String(c.id)===String(s.class_id))||{}).name||'Class')} — ${esc(s.name)}</option>`).join('');}
+async function loadProfile(user){const {data,error}=await client.from(TABLES.profiles).select('*').eq('id',user.id).maybeSingle();if(error)throw new Error('Could not read msys_user_profiles: '+error.message);if(!data)throw new Error('Your Supabase login has no row in msys_user_profiles. Ask the system developer to link this auth user to a school profile.');state.profile=data;state.schoolId=first(data,['school_id','schoolid']);if(!state.schoolId)throw new Error('Your user profile has no school_id. Add/assign the school before continuing.');state.schoolName=first(data,['school_name','school'], 'School Administration');try{const {data:school}=await client.from(TABLES.schools).select('*').eq('id',state.schoolId).maybeSingle();if(school)state.schoolName=first(school,['name','school_name','official_name'],state.schoolName);}catch(e){}}
+async function loadStudents(){const {data,error}=await client.from(TABLES.students).select('*').eq('school_id',state.schoolId).limit(5000);if(error)throw new Error('Could not load msys_students: '+error.message);state.students=data||[];}
+async function loadSimple(table,order='created_at'){const {data,error}=await client.from(table).select('*').eq('school_id',state.schoolId).order(order,{ascending:false}).limit(5000);if(error){if(error.code==='42P01'||error.message.toLowerCase().includes('does not exist'))return [];throw new Error(`Could not load ${table}: ${error.message}`);}return data||[];}
+async function loadAll(){await loadStudents();state.classes=await loadSimple(TABLES.classes,'name');state.streams=await loadSimple(TABLES.streams,'name');state.records=await loadSimple(TABLES.records,'record_date');state.exams=await loadSimple(TABLES.exams,'exam_date');state.marks=await loadSimple(TABLES.marks,'created_at');state.teachers=await loadSimple(TABLES.teachers,'full_name');renderAll();$('schoolLabel').textContent=state.schoolName;$('signedInLabel').textContent=state.user.email||'Signed in';$('connectionUrl').textContent=SUPABASE_URL;$('connectionUser').textContent=state.user.email||state.user.id;$('connectionSchool').textContent=state.schoolId;}
+function renderAll(){renderOverview();renderStudents();renderClasses();renderRecords();renderExams();renderTeachers();renderReports();}
+function renderOverview(){$('statStudents').textContent=state.students.length;$('statClasses').textContent=state.classes.length;$('statStreams').textContent=state.streams.length;$('statRecords').textContent=state.records.length+state.marks.length;const recent=[...state.students].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,6);$('recentStudents').innerHTML=makeTable(['Admission no.','Student','Class','Stream','Gender','Action'],recent.map(s=>`<tr><td>${esc(studentAdmission(s))}</td><td><span class="person">${esc(studentName(s))}</span></td><td>${esc(studentClass(s))}</td><td>${esc(studentStream(s))}</td><td>${esc(studentGender(s))}</td><td><div class="actions"><button class="secondary" data-edit-student="${esc(s.id)}">Edit</button></div></td></tr>`),'No students registered yet.');}
+function renderStudents(){const q=norm($('studentSearch')?.value).toLowerCase(),cf=$('studentClassFilter')?.value||'',sf=$('studentStreamFilter')?.value||'',gf=$('studentGenderFilter')?.value||'';fillStudentFilters();const list=state.students.filter(s=>{const hay=[studentName(s),studentAdmission(s),studentClass(s),studentStream(s),studentGender(s),first(s,['phone','parent_phone','guardian_phone']),first(s,['guardian_name','parent_name'])].join(' ').toLowerCase();return (!q||hay.includes(q))&&(!cf||studentClass(s)===cf||String(first(s,['class_id']))===cf)&&(!sf||studentStream(s)===sf||String(first(s,['stream_id']))===sf)&&(!gf||studentGender(s).toLowerCase()===gf.toLowerCase());});$('studentTable').innerHTML=makeTable(['Admission no.','Student name','Class / grade','Stream','Gender','Phone','Actions'],list.map(s=>`<tr><td>${esc(studentAdmission(s))}</td><td><span class="person">${esc(studentName(s))}</span><br><span class="muted small">${esc(first(s,['email']))}</span></td><td>${esc(studentClass(s))}</td><td>${esc(studentStream(s))}</td><td>${esc(studentGender(s))}</td><td>${esc(first(s,['phone','parent_phone'],'—'))}</td><td><div class="actions"><button class="secondary" data-view-student="${esc(s.id)}">View</button><button data-edit-student="${esc(s.id)}">Edit</button><button class="danger" data-delete-student="${esc(s.id)}">Delete</button></div></td></tr>`), 'No students match these filters.');}
+function fillStudentFilters(){const cf=$('studentClassFilter'),sf=$('studentStreamFilter');if(!cf||!sf)return;const cv=cf.value,sv=sf.value;const classVals=[...new Set([...state.classes.map(c=>c.name),...state.students.map(studentClass).filter(v=>v!=='—')])];cf.innerHTML='<option value="">All classes</option>'+classVals.map(v=>`<option ${v===cv?'selected':''}>${esc(v)}</option>`).join('');const streamVals=[...new Set([...state.streams.map(s=>s.name),...state.students.map(studentStream).filter(v=>v!=='—')])];sf.innerHTML='<option value="">All streams</option>'+streamVals.map(v=>`<option ${v===sv?'selected':''}>${esc(v)}</option>`).join('');}
+function renderClasses(){$('classTable').innerHTML=makeTable(['Class / grade','Level','Streams','Students','Actions'],state.classes.map(c=>{const count=state.students.filter(s=>studentClass(s)===c.name||String(first(s,['class_id']))===String(c.id)).length;const sc=state.streams.filter(s=>String(s.class_id)===String(c.id)).length;return `<tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.level||'—')}</td><td>${sc}</td><td>${count}</td><td><div class="actions"><button class="secondary" data-edit-class="${esc(c.id)}">Edit</button><button class="danger" data-delete-class="${esc(c.id)}">Delete</button></div></td></tr>`;}));$('streamTable').innerHTML=makeTable(['Stream','Class / grade','Students','Actions'],state.streams.map(s=>{const c=state.classes.find(c=>String(c.id)===String(s.class_id));const count=state.students.filter(st=>studentStream(st)===s.name&&(!c||studentClass(st)===c.name)).length;return `<tr><td><strong>${esc(s.name)}</strong></td><td>${esc(c?.name||'Class not found')}</td><td>${count}</td><td><div class="actions"><button class="secondary" data-edit-stream="${esc(s.id)}">Edit</button><button class="danger" data-delete-stream="${esc(s.id)}">Delete</button></div></td></tr>`;}));$('streamClassSelect').innerHTML=classOptions();$('studentClassFilter').innerHTML='<option value="">All classes</option>'+[...new Set([...state.classes.map(c=>c.name),...state.students.map(studentClass).filter(v=>v!=='—')])].map(v=>`<option>${esc(v)}</option>`).join('');}
+function recordStudent(r){return state.students.find(s=>String(s.id)===String(r.student_id));}
+function renderRecords(){const q=norm($('recordSearch')?.value).toLowerCase(),type=$('recordTypeFilter')?.value||'';const rows=state.records.filter(r=>{const s=recordStudent(r);return (!type||r.record_type===type)&&(!q||[r.title,r.record_type,studentName(s||{}),studentAdmission(s||{}),JSON.stringify(r.data||{})].join(' ').toLowerCase().includes(q));});$('recordsTable').innerHTML=makeTable(['Date','Student','Record type','Title','Details','Actions'],rows.map(r=>{const s=recordStudent(r);return `<tr><td>${esc(r.record_date||'—')}</td><td>${esc(s?studentName(s):'Unlinked student')}</td><td><span class="pill">${esc(r.record_type)}</span></td><td>${esc(r.title)}</td><td>${esc(JSON.stringify(r.data||{}).slice(0,100))}</td><td><div class="actions"><button class="secondary" data-edit-record="${esc(r.id)}">Edit</button><button class="danger" data-delete-record="${esc(r.id)}">Delete</button></div></td></tr>`;}));}
+function renderExams(){$('examsTable').innerHTML=makeTable(['Exam','Term','Date','Academic year','Marks saved','Actions'],state.exams.map(e=>`<tr><td><strong>${esc(e.name)}</strong></td><td>${esc(e.term||'—')}</td><td>${esc(e.exam_date||'—')}</td><td>${esc(e.academic_year||'—')}</td><td>${state.marks.filter(m=>String(m.exam_id)===String(e.id)).length}</td><td><div class="actions"><button class="secondary" data-edit-exam="${esc(e.id)}">Edit</button><button class="danger" data-delete-exam="${esc(e.id)}">Delete</button></div></td></tr>`));const q=norm($('marksSearch')?.value).toLowerCase();const rows=state.marks.filter(m=>{const s=recordStudent(m);const e=state.exams.find(e=>String(e.id)===String(m.exam_id));return !q||[studentName(s||{}),studentAdmission(s||{}),e?.name,m.subject].join(' ').toLowerCase().includes(q);});$('marksTable').innerHTML=makeTable(['Student','Admission no.','Exam','Subject','Score','Out of','Percent','Actions'],rows.map(m=>{const s=recordStudent(m),e=state.exams.find(e=>String(e.id)===String(m.exam_id));const pct=Number(m.out_of)>0?Number(m.marks_scored)/Number(m.out_of)*100:0;return `<tr><td>${esc(s?studentName(s):'Student missing')}</td><td>${esc(studentAdmission(s||{}))}</td><td>${esc(e?.name||'Exam missing')}</td><td>${esc(m.subject)}</td><td>${esc(m.marks_scored)}</td><td>${esc(m.out_of)}</td><td>${pct.toFixed(1)}%</td><td><div class="actions"><button class="secondary" data-edit-mark="${esc(m.id)}">Edit</button><button class="danger" data-delete-mark="${esc(m.id)}">Delete</button></div></td></tr>`;}));}
+function renderTeachers(){$('teachersTable').innerHTML=makeTable(['Teacher','Phone','Email','Subjects','Status','Actions'],state.teachers.map(t=>`<tr><td><strong>${esc(t.full_name)}</strong></td><td>${esc(t.phone||'—')}</td><td>${esc(t.email||'—')}</td><td>${esc(t.subjects||'—')}</td><td><span class="pill ${t.status==='approved'?'green':t.status==='rejected'?'red':'amber'}">${esc(t.status||'pending')}</span></td><td><div class="actions"><button class="secondary" data-edit-teacher="${esc(t.id)}">Edit</button><button class="danger" data-delete-teacher="${esc(t.id)}">Delete</button></div></td></tr>`));}
+function renderReports(){const males=state.students.filter(s=>studentGender(s).toLowerCase()==='male').length,females=state.students.filter(s=>studentGender(s).toLowerCase()==='female').length;const avgs=state.marks.map(m=>Number(m.out_of)>0?Number(m.marks_scored)/Number(m.out_of)*100:null).filter(n=>n!==null&&!Number.isNaN(n));$('reportMale').textContent=males;$('reportFemale').textContent=females;$('reportMarked').textContent=new Set(state.marks.map(m=>m.student_id)).size;$('reportAverage').textContent=avgs.length?(avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(1)+'%':'—';const combos={};state.students.forEach(s=>{const key=studentClass(s)+' / '+studentStream(s)+' / '+studentGender(s);combos[key]=(combos[key]||0)+1;});$('classSummaryTable').innerHTML=makeTable(['Class / stream / gender','Students'],Object.entries(combos).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`));const subs={};state.marks.forEach(m=>{const k=m.subject||'Unspecified';if(!subs[k])subs[k]={n:0,total:0,out:0,passes:0};subs[k].n++;subs[k].total+=Number(m.marks_scored)||0;subs[k].out+=Number(m.out_of)||0;if(Number(m.out_of)>0&&Number(m.marks_scored)/Number(m.out_of)>=.5)subs[k].passes++;});$('subjectSummaryTable').innerHTML=makeTable(['Subject','Entries','Average %','Pass rate (50%+)'],Object.entries(subs).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.n}</td><td>${v.out?(v.total/v.out*100).toFixed(1)+'%':'—'}</td><td>${v.n?(v.passes/v.n*100).toFixed(1)+'%':'—'}</td></tr>`));}
+function modal(title,body,saveText='Save'){return new Promise(resolve=>{const root=$('modalRoot');root.classList.remove('hidden');root.innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h3>${esc(title)}</h3><button type="button" class="ghost" id="modalClose">✕</button></div><form id="modalForm">${body}<div class="modal-foot"><button type="button" class="ghost" id="modalCancel">Cancel</button><button type="submit">${esc(saveText)}</button></div></form></div></div>`;const close=value=>{root.classList.add('hidden');root.innerHTML='';resolve(value);};$('modalClose').onclick=()=>close(null);$('modalCancel').onclick=()=>close(null);$('modalForm').onsubmit=e=>{e.preventDefault();const fd=new FormData(e.currentTarget);const out={};for(const [k,v] of fd.entries())out[k]=v;close(out);};root.querySelector('.modal-backdrop').addEventListener('click',e=>{if(e.target.classList.contains('modal-backdrop'))close(null);});});}
+function input(name,label,value='',type='text',required=false,extra=''){return `<div class="field"><label>${esc(label)}</label><input name="${esc(name)}" type="${type}" value="${esc(value)}" ${required?'required':''} ${extra}></div>`;}
+function selectField(name,label,options,value='',required=false){return `<div class="field"><label>${esc(label)}</label><select name="${esc(name)}" ${required?'required':''}>${options.map(o=>`<option value="${esc(o.value)}" ${String(o.value)===String(value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select></div>`;}
+async function saveStudent(s=null){const body=`<div class="modal-grid">${input('admission_number','Admission number',s?studentAdmission(s)==='—'?'':studentAdmission(s):'', 'text',true)}${input('full_name','Full student name',s?studentName(s)==='Unnamed student'?'':studentName(s):'', 'text',true)}${input('first_name','First name',s?.first_name||'')}${input('last_name','Last name / surname',s?.last_name||s?.surname||'')}${selectField('gender','Gender',[{value:'',label:'Select gender'},{value:'Female',label:'Female'},{value:'Male',label:'Male'},{value:'Other',label:'Other'}],studentGender(s||{})==='—'?'':studentGender(s||{}))}${input('date_of_birth','Date of birth',s?.date_of_birth||'','date')}${input('phone','Phone number',s?.phone||'','tel')}${input('email','Email',s?.email||'','email')}${input('guardian_name','Parent / guardian',s?.guardian_name||s?.parent_name||'')}${input('guardian_phone','Guardian phone',s?.guardian_phone||s?.parent_phone||'','tel')}${selectField('class_name','Class / grade',[{value:'',label:'Select class / grade'},...state.classes.map(c=>({value:c.name,label:c.name}))],studentClass(s||{})==='—'?'':studentClass(s||{}))}${selectField('stream_name','Stream',[{value:'',label:'Select stream'},...state.streams.map(st=>({value:st.name,label:(state.classes.find(c=>String(c.id)===String(st.class_id))?.name||'')+' — '+st.name}))],studentStream(s||{})==='—'?'':studentStream(s||{}))}${selectField('status','Status',[{value:'active',label:'Active'},{value:'inactive',label:'Inactive'},{value:'transferred',label:'Transferred'}],s?.status||'active')}${`<div class="field wide"><label>Address / additional notes</label><textarea name="notes" rows="2">${esc(s?.notes||s?.address||'')}</textarea></div>`}</div>`;
+const data=await modal(s?'Edit student':'Register student',body,s?'Save changes':'Register student');if(!data)return;
+const payload={school_id:state.schoolId,admission_number:norm(data.admission_number),full_name:norm(data.full_name),first_name:norm(data.first_name)||null,last_name:norm(data.last_name)||null,gender:data.gender||null,date_of_birth:data.date_of_birth||null,phone:norm(data.phone)||null,email:norm(data.email)||null,guardian_name:norm(data.guardian_name)||null,guardian_phone:norm(data.guardian_phone)||null,class_name:data.class_name||null,stream_name:data.stream_name||null,status:data.status||'active',notes:norm(data.notes)||null};
+if(s){const existing={...s,...payload};const {error}=await client.from(TABLES.students).update(existing).eq('id',s.id).eq('school_id',state.schoolId);if(error){notify('Student update failed: '+error.message+' — your existing student table may use different column names.', 'error');return;}}
+else{const {error}=await client.from(TABLES.students).insert(payload);if(error){notify('Student registration failed: '+error.message+' — check your msys_students columns in Supabase.', 'error');return;}}
+await refreshData();notify(s?'Student updated.':'Student registered.','success');}
+async function deleteRow(table,id,label){if(!confirm(`Delete this ${label}? This cannot be undone.`))return;const {error}=await client.from(table).delete().eq('id',id).eq('school_id',state.schoolId);if(error){notify(`Could not delete ${label}: ${error.message}`,'error');return;}await refreshData();notify(`${label} deleted.`,'success');}
+async function saveClass(c=null){const d=await modal(c?'Edit class / grade':'Add class / grade',`<div class="modal-grid">${input('name','Class / grade name',c?.name||'', 'text',true)}${input('level','Level / year (optional)',c?.level||'')}</div>`);if(!d)return;const payload={school_id:state.schoolId,name:norm(d.name),level:norm(d.level)||null};const res=c?await client.from(TABLES.classes).update(payload).eq('id',c.id).eq('school_id',state.schoolId):await client.from(TABLES.classes).insert(payload);if(res.error){notify('Could not save class: '+res.error.message,'error');return;}await refreshData();notify('Class saved.','success');}
+async function saveStream(st=null){const d=await modal(st?'Edit stream':'Add stream',`<div class="modal-grid">${selectField('class_id','Class / grade',state.classes.map(c=>({value:c.id,label:c.name})),st?.class_id||'',true)}${input('name','Stream name',st?.name||'','text',true)}</div>`);if(!d)return;const payload={school_id:state.schoolId,class_id:d.class_id,name:norm(d.name)};const res=st?await client.from(TABLES.streams).update(payload).eq('id',st.id).eq('school_id',state.schoolId):await client.from(TABLES.streams).insert(payload);if(res.error){notify('Could not save stream: '+res.error.message,'error');return;}await refreshData();notify('Stream saved.','success');}
+async function saveRecord(r=null){const s=recordStudent(r);const d=await modal(r?'Edit student record':'Add student record',`<div class="modal-grid">${selectField('student_id','Student',state.students.map(st=>({value:st.id,label:studentAdmission(st)+' — '+studentName(st)})),r?.student_id||'',true)}${selectField('record_type','Record type',['attendance','fees','discipline','health','parent_contact','note','other'].map(v=>({value:v,label:v.replace('_',' ')})),r?.record_type||'note',true)}${input('title','Record title',r?.title||'','text',true)}${input('record_date','Record date',r?.record_date||new Date().toISOString().slice(0,10),'date',true)}<div class="field wide"><label>Details (plain text or JSON)</label><textarea name="details" rows="4">${esc(typeof r?.data==='object'?JSON.stringify(r.data,null,2):r?.data||'')}</textarea></div></div>`);if(!d)return;let recordData={};try{recordData=JSON.parse(d.details||'{}');}catch{recordData={notes:d.details||''};}const payload={school_id:state.schoolId,student_id:d.student_id,record_type:d.record_type,title:norm(d.title),record_date:d.record_date,data:recordData,created_by:state.user.id};const res=r?await client.from(TABLES.records).update(payload).eq('id',r.id).eq('school_id',state.schoolId):await client.from(TABLES.records).insert(payload);if(res.error){notify('Could not save record: '+res.error.message,'error');return;}await refreshData();notify('Student record saved.','success');}
+async function saveExam(e=null){const d=await modal(e?'Edit examination':'Create examination',`<div class="modal-grid">${input('name','Examination name',e?.name||'','text',true)}${input('term','Term / semester',e?.term||'')}${input('exam_date','Exam date',e?.exam_date||new Date().toISOString().slice(0,10),'date')}${input('academic_year','Academic year',e?.academic_year||String(new Date().getFullYear()))}${input('notes','Notes',e?.notes||'')}</div>`);if(!d)return;const payload={school_id:state.schoolId,name:norm(d.name),term:norm(d.term)||null,exam_date:d.exam_date||null,academic_year:norm(d.academic_year)||null,notes:norm(d.notes)||null,created_by:state.user.id};const res=e?await client.from(TABLES.exams).update(payload).eq('id',e.id).eq('school_id',state.schoolId):await client.from(TABLES.exams).insert(payload);if(res.error){notify('Could not save examination: '+res.error.message,'error');return;}await refreshData();notify('Examination saved.','success');}
+async function saveMark(m=null){const d=await modal(m?'Edit mark':'Enter student mark',`<div class="modal-grid">${selectField('student_id','Student',state.students.map(st=>({value:st.id,label:studentAdmission(st)+' — '+studentName(st)})),m?.student_id||'',true)}${selectField('exam_id','Examination',state.exams.map(e=>({value:e.id,label:e.name+(e.term?' — '+e.term:'')})),m?.exam_id||'',true)}${input('subject','Subject',m?.subject||'','text',true)}${input('marks_scored','Marks scored',m?.marks_scored??'','number',true,'min="0" step="0.01"')}${input('out_of','Maximum marks',m?.out_of??100,'number',true,'min="0.01" step="0.01"')}${input('notes','Notes',m?.notes||'')}</div>`);if(!d)return;const scored=Number(d.marks_scored),out=Number(d.out_of);if(!Number.isFinite(scored)||!Number.isFinite(out)||out<=0||scored<0||scored>out){notify('Marks must be between zero and the maximum marks.','error');return;}const payload={school_id:state.schoolId,student_id:d.student_id,exam_id:d.exam_id,subject:norm(d.subject),marks_scored:scored,out_of:out,notes:norm(d.notes)||null,entered_by:state.user.id};const res=m?await client.from(TABLES.marks).update(payload).eq('id',m.id).eq('school_id',state.schoolId):await client.from(TABLES.marks).insert(payload);if(res.error){notify('Could not save mark: '+res.error.message,'error');return;}await refreshData();notify('Mark saved.','success');}
+async function saveTeacher(t=null){const d=await modal(t?'Edit teacher record':'Add teacher record',`<div class="modal-grid">${input('full_name','Teacher full name',t?.full_name||'','text',true)}${input('phone','Phone number',t?.phone||'','tel')}${input('email','Email',t?.email||'','email')}${input('subjects','Subjects taught',t?.subjects||'','text')}${selectField('status','Status',[{value:'pending',label:'Pending'},{value:'approved',label:'Approved'},{value:'suspended',label:'Suspended'},{value:'rejected',label:'Rejected'}],t?.status||'pending',true)}</div>`);if(!d)return;const payload={school_id:state.schoolId,full_name:norm(d.full_name),phone:norm(d.phone)||null,email:norm(d.email)||null,subjects:norm(d.subjects)||null,status:d.status};const res=t?await client.from(TABLES.teachers).update(payload).eq('id',t.id).eq('school_id',state.schoolId):await client.from(TABLES.teachers).insert(payload);if(res.error){notify('Could not save teacher: '+res.error.message,'error');return;}await refreshData();notify('Teacher record saved.','success');}
+async function refreshData(){await loadAll();}
+function downloadCSV(filename,rows){if(!rows.length){notify('There is no data to export.','info');return;}const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);}
+function exportStudents(){downloadCSV('students.csv',[['Admission no.','Name','Class','Stream','Gender','Phone','Email','Guardian'],...state.students.map(s=>[studentAdmission(s),studentName(s),studentClass(s),studentStream(s),studentGender(s),first(s,['phone','parent_phone']),s.email,first(s,['guardian_name','parent_name'])])]);}
+function exportRecords(){downloadCSV('student-records.csv',[['Date','Student','Admission','Type','Title','Details'],...state.records.map(r=>{const s=recordStudent(r);return [r.record_date,studentName(s||{}),studentAdmission(s||{}),r.record_type,r.title,JSON.stringify(r.data||{})];})]);}
+function exportMarks(){downloadCSV('exam-marks.csv',[['Student','Admission','Exam','Subject','Marks','Out of','Percentage'],...state.marks.map(m=>{const s=recordStudent(m),e=state.exams.find(e=>String(e.id)===String(m.exam_id));return [studentName(s||{}),studentAdmission(s||{}),e?.name,m.subject,m.marks_scored,m.out_of,Number(m.out_of)?(Number(m.marks_scored)/Number(m.out_of)*100).toFixed(2):''];})]);}
+function exportClassSummary(){const combos={};state.students.forEach(s=>{const k=studentClass(s)+' / '+studentStream(s)+' / '+studentGender(s);combos[k]=(combos[k]||0)+1;});downloadCSV('class-stream-summary.csv',[['Class / stream / gender','Students'],...Object.entries(combos).map(([k,v])=>[k,v])]);}
+async function testConnection(){const el=$('connectionStatus');el.className='notice info';el.textContent='Testing Supabase access…';try{const {error}=await client.from(TABLES.students).select('id',{head:true,count:'exact'}).eq('school_id',state.schoolId);if(error)throw error;el.className='notice success';el.textContent='Connection works and the student table is accessible for this school.';}catch(e){el.className='notice error';el.textContent='Connection test failed: '+e.message;}}
+document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;try{
+if(b.dataset.page)showPage(b.dataset.page);if(b.dataset.goto)showPage(b.dataset.goto);
+if(b.id==='addStudentBtn'||b.id==='addStudentTop')await saveStudent();
+if(b.id==='addRecordBtn'||b.id==='addRecordTop')await saveRecord();
+if(b.id==='addExamBtn')await saveExam();if(b.id==='addMarkBtn')await saveMark();if(b.id==='addTeacherBtn')await saveTeacher();
+if(b.id==='refreshBtn')await refreshData();if(b.id==='exportStudentsBtn')exportStudents();if(b.id==='exportRecordsBtn')exportRecords();if(b.id==='exportMarksBtn')exportMarks();if(b.id==='exportClassSummary')exportClassSummary();if(b.id==='printReportsBtn')window.print();if(b.id==='testConnectionBtn')await testConnection();
+if(b.dataset.editStudent){const s=state.students.find(x=>String(x.id)===b.dataset.editStudent);if(s)await saveStudent(s);}
+if(b.dataset.viewStudent){const s=state.students.find(x=>String(x.id)===b.dataset.viewStudent);if(s)alert(['Name: '+studentName(s),'Admission: '+studentAdmission(s),'Class: '+studentClass(s),'Stream: '+studentStream(s),'Gender: '+studentGender(s),'Phone: '+first(s,['phone'],'—'),'Email: '+first(s,['email'],'—'),'Guardian: '+first(s,['guardian_name','parent_name'],'—')].join('\n'));}
+if(b.dataset.deleteStudent)await deleteRow(TABLES.students,b.dataset.deleteStudent,'student');
+if(b.dataset.editClass){const c=state.classes.find(x=>String(x.id)===b.dataset.editClass);if(c)await saveClass(c);}
+if(b.dataset.deleteClass)await deleteRow(TABLES.classes,b.dataset.deleteClass,'class');
+if(b.dataset.editStream){const s=state.streams.find(x=>String(x.id)===b.dataset.editStream);if(s)await saveStream(s);}
+if(b.dataset.deleteStream)await deleteRow(TABLES.streams,b.dataset.deleteStream,'stream');
+if(b.dataset.editRecord){const r=state.records.find(x=>String(x.id)===b.dataset.editRecord);if(r)await saveRecord(r);}
+if(b.dataset.deleteRecord)await deleteRow(TABLES.records,b.dataset.deleteRecord,'student record');
+if(b.dataset.editExam){const x=state.exams.find(x=>String(x.id)===b.dataset.editExam);if(x)await saveExam(x);}
+if(b.dataset.deleteExam)await deleteRow(TABLES.exams,b.dataset.deleteExam,'exam');
+if(b.dataset.editMark){const x=state.marks.find(x=>String(x.id)===b.dataset.editMark);if(x)await saveMark(x);}
+if(b.dataset.deleteMark)await deleteRow(TABLES.marks,b.dataset.deleteMark,'mark');
+if(b.dataset.editTeacher){const x=state.teachers.find(x=>String(x.id)===b.dataset.editTeacher);if(x)await saveTeacher(x);}
+if(b.dataset.deleteTeacher)await deleteRow(TABLES.teachers,b.dataset.deleteTeacher,'teacher record');
+}catch(err){notify(err.message||String(err),'error');}});
+$('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginButton').disabled=true;$('loginButton').textContent='Signing in…';try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;state.user=data.user;await loadProfile(state.user);$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadAll();}catch(err){loginNotice(err.message||'Sign-in failed.');}finally{$('loginButton').disabled=false;$('loginButton').textContent='Sign in';}});
+$('logoutBtn').addEventListener('click',async()=>{await client.auth.signOut();location.reload();});
+['studentSearch','studentClassFilter','studentStreamFilter','studentGenderFilter'].forEach(id=>$(id).addEventListener('input',renderStudents));
+['recordSearch','recordTypeFilter'].forEach(id=>$(id).addEventListener('input',renderRecords));$('marksSearch').addEventListener('input',renderExams);
+$('classForm').addEventListener('submit',async e=>{e.preventDefault();try{await saveClassFromQuick();}catch(err){notify(err.message,'error');}});
+async function saveClassFromQuick(){const name=norm($('classNameInput').value),level=norm($('classLevelInput').value);if(!name)return;const {error}=await client.from(TABLES.classes).insert({school_id:state.schoolId,name,level:level||null});if(error){notify('Could not add class: '+error.message,'error');return;} $('classNameInput').value='';$('classLevelInput').value='';await refreshData();notify('Class added.','success');}
+$('streamForm').addEventListener('submit',async e=>{e.preventDefault();try{const class_id=$('streamClassSelect').value,name=norm($('streamNameInput').value);if(!class_id||!name)return;const {error}=await client.from(TABLES.streams).insert({school_id:state.schoolId,class_id,name});if(error)throw error;$('streamNameInput').value='';await refreshData();notify('Stream added.','success');}catch(err){notify('Could not add stream: '+err.message,'error');}});
+async function init(){try{const {data}=await client.auth.getSession();if(data.session){state.user=data.session.user;await loadProfile(state.user);$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadAll();}}catch(err){loginNotice(err.message||'Could not restore your session.');}}
 init();
 })();
 </script>
