@@ -3,214 +3,938 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My School System | School Admin</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<title>My School System | Administrator</title>
+
 <style>
-:root{--navy:#13213d;--navy2:#1d3158;--blue:#315ee8;--cyan:#15aabf;--bg:#f4f7fb;--ink:#17243a;--muted:#69768a;--line:#e2e8f0;--white:#fff;--green:#13845b;--red:#c43d4b;--amber:#9a6700}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:0;border-radius:9px;padding:10px 13px;background:var(--blue);color:#fff;font-weight:650}button.secondary{background:#eaf0ff;color:#2346b9}button.ghost{background:#f0f3f8;color:#26354b}button.danger{background:#b82f40}button:disabled{opacity:.5;cursor:not-allowed}.app{min-height:100vh}.topbar{background:linear-gradient(120deg,var(--navy),var(--navy2));color:#fff;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:5;box-shadow:0 3px 15px #10203a20}.brand{display:flex;gap:11px;align-items:center}.logo{width:40px;height:40px;border-radius:12px;background:#ffffff1c;display:grid;place-items:center;font-size:22px}.brand h1{font-size:17px;margin:0}.brand p{font-size:12px;margin:2px 0 0;color:#d6e1ff}.top-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.top-actions .ghost{background:#ffffff18;color:#fff}.layout{display:grid;grid-template-columns:235px minmax(0,1fr);min-height:calc(100vh - 70px)}aside{background:#fff;border-right:1px solid var(--line);padding:16px 12px}.nav-label{font-size:10px;letter-spacing:1.4px;color:#8994a7;font-weight:800;padding:12px 12px 7px}.nav{display:flex;flex-direction:column;gap:4px}.nav button{display:flex;align-items:center;gap:11px;text-align:left;background:transparent;color:#445168;font-weight:650;padding:11px 12px;border-radius:10px}.nav button.active,.nav button:hover{background:#edf2ff;color:#2349c7}.nav .ico{width:20px;text-align:center;font-size:17px}.side-note{margin:20px 8px 0;padding:12px;border-radius:12px;background:#f5f8fc;color:#657187;font-size:12px}.main{padding:22px;min-width:0}.page-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px}.page-head h2{margin:0;font-size:24px;letter-spacing:-.5px}.page-head p{margin:5px 0 0;color:var(--muted)}.head-actions{display:flex;gap:8px;flex-wrap:wrap}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:18px}.stat,.panel,.card{background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:0 4px 14px #1b315408}.stat{padding:16px}.stat .label{color:var(--muted);font-size:12px;font-weight:650}.stat .value{font-size:26px;font-weight:800;margin-top:5px;letter-spacing:-.7px}.stat .sub{font-size:11px;color:#8a95a7;margin-top:3px}.panel{padding:17px;margin-bottom:16px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.panel-head h3{margin:0;font-size:16px}.panel-head p{margin:3px 0 0;color:var(--muted);font-size:12px}.filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:13px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:12px;font-weight:700;color:#526078}.field input,.field select,.field textarea,input,select,textarea{border:1px solid #d6deea;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);min-width:0;outline:none}.field input:focus,.field select:focus,.field textarea:focus,input:focus,select:focus,textarea:focus{border-color:#6a8af3;box-shadow:0 0 0 3px #315ee818}.search{flex:1;min-width:200px}.search input{width:100%}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:11px}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:11px 12px;border-bottom:1px solid #edf0f5;vertical-align:middle}th{font-size:11px;text-transform:uppercase;letter-spacing:.55px;color:#748197;background:#f8faff;white-space:nowrap}td{font-size:13px}tbody tr:hover{background:#f9fbff}tbody tr:last-child td{border-bottom:0}.person{font-weight:750}.muted{color:var(--muted)}.pill{display:inline-flex;padding:4px 8px;border-radius:30px;font-size:11px;font-weight:750;background:#edf2ff;color:#3152b8}.pill.green{background:#e3f8ef;color:#16734f}.pill.amber{background:#fff3d7;color:#916200}.pill.red{background:#ffeaec;color:#a82b3b}.actions{display:flex;gap:6px;flex-wrap:wrap}.actions button{padding:6px 9px;font-size:11px}.empty{padding:30px;text-align:center;color:#7a879a}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.quick{padding:16px;text-align:left;background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:13px;min-height:100px}.quick strong{display:block;font-size:15px;margin-bottom:5px}.quick span{font-weight:400;color:var(--muted);font-size:12px}.quick:hover{border-color:#9eb1fb;background:#f9faff}.notice{padding:11px 13px;border-radius:10px;margin:0 0 14px;font-size:13px}.notice.info{background:#edf5ff;color:#2453a2}.notice.error{background:#fff0f1;color:#a42a3b}.notice.success{background:#e7f8ef;color:#166b4a}.hidden{display:none!important}.modal-backdrop{position:fixed;inset:0;background:#101a2e80;display:grid;place-items:center;padding:15px;z-index:20}.modal{width:min(760px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:17px;padding:20px;box-shadow:0 20px 80px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.modal-head h3{margin:0;font-size:19px}.modal-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.modal-grid .wide{grid-column:1/-1}.modal-foot{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.login-wrap{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(140deg,#101d39,#234987)}.login-card{background:#fff;border-radius:20px;padding:27px;width:min(430px,100%);box-shadow:0 20px 70px #0003}.login-card h1{margin:0 0 5px}.login-card p{color:var(--muted);margin:0 0 20px}.login-card .field{margin:12px 0}.login-card button{width:100%;margin-top:8px}.login-mark{font-size:30px;margin-bottom:10px}.status-line{font-size:12px;color:#cbd6ec}.small{font-size:12px}.footer-note{font-size:11px;color:#8792a5;margin-top:12px}.mobile-menu{display:none}
-@media(max-width:900px){.layout{grid-template-columns:1fr}aside{border-right:0;border-bottom:1px solid var(--line);padding:8px;position:sticky;top:70px;z-index:4;overflow:auto}.nav{flex-direction:row;min-width:max-content}.nav-label,.side-note{display:none}.nav button{padding:9px 11px}.main{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.grid3{grid-template-columns:repeat(2,minmax(0,1fr))}.topbar{padding:12px}.brand h1{font-size:15px}}
-@media(max-width:560px){.topbar{align-items:flex-start}.brand p{max-width:190px}.top-actions button{padding:8px;font-size:12px}.page-head{display:block}.page-head h2{font-size:21px}.head-actions{margin-top:12px}.stats{gap:8px}.stat{padding:12px}.stat .value{font-size:22px}.grid2,.grid3,.modal-grid{grid-template-columns:1fr}.modal-grid .wide{grid-column:auto}.panel{padding:12px}.filters>*{width:100%;flex:auto}.search{min-width:100%}.modal{padding:15px}}
-@media print{.topbar,aside,.head-actions,.filters,.actions,.no-print{display:none!important}.layout{display:block}.main{padding:0}.panel,.stat{box-shadow:none;break-inside:avoid}body{background:#fff}.table-wrap{overflow:visible}table{min-width:0;font-size:10px}th,td{padding:6px}}
+:root {
+  --navy:#10254b;
+  --blue:#246bfd;
+  --bg:#f3f6fc;
+  --green:#0eae79;
+  --text:#182744;
+  --muted:#73809a;
+  --border:#e3e9f3;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  color:var(--text);
+  background:var(--bg);
+}
+button,input,select,textarea {font:inherit}
+button {cursor:pointer}
+.layout {display:flex;min-height:100vh}
+.sidebar {
+  width:245px;background:var(--navy);color:white;
+  padding:20px 13px;flex-shrink:0;
+}
+.brand {font-size:21px;font-weight:bold;padding:8px 9px 24px}
+.brand small {display:block;font-size:12px;font-weight:normal;margin-top:6px;color:#c5d5f4}
+.nav-title {font-size:11px;color:#94a9cf;padding:15px 10px 8px}
+.nav {
+  width:100%;display:block;text-align:left;border:0;
+  background:transparent;color:#dce6fa;padding:13px 12px;
+  border-radius:8px;margin:3px 0;
+}
+.nav:hover,.nav.active {background:var(--blue);color:white}
+.sidebar-footer {
+  margin-top:30px;padding:18px 10px;text-align:center;
+  border-top:1px solid #30446a;font-size:12px;line-height:1.8;color:#cbd7ed;
+}
+.main {flex:1;min-width:0}
+.topbar {
+  height:68px;background:white;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 25px;gap:15px;
+}
+.search {width:min(440px,60%);padding:11px 14px;border:1px solid var(--border);border-radius:8px}
+.top-right {font-size:13px;color:var(--muted)}
+.content {padding:25px;max-width:1600px;margin:auto}
+.welcome {
+  background:white;border:1px solid var(--border);border-radius:12px;
+  padding:24px;display:flex;justify-content:space-between;align-items:center;
+  gap:15px;margin-bottom:20px;
+}
+.welcome h1 {font-size:25px;margin:0 0 8px}
+.welcome p {margin:0;color:var(--muted);font-size:14px}
+.status {background:#e8fbf2;color:#087b53;padding:12px 15px;border-radius:9px;font-size:13px}
+.stats {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px;margin-bottom:20px}
+.card {
+  background:white;border:1px solid var(--border);border-radius:11px;
+  padding:19px;min-width:0;
+}
+.stat-label {font-size:13px;color:var(--muted)}
+.stat-value {font-size:28px;font-weight:bold;margin:10px 0 5px}
+.stat-icon {font-size:23px;margin-bottom:10px}
+.blue {color:#246bfd}.green {color:#0eae79}.orange {color:#ed9510}.purple {color:#9146e8}
+.grid2 {display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:20px}
+.section-head {
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:10px;margin-bottom:16px;
+}
+.section-head h2 {font-size:18px;margin:0}
+.btn {
+  border:0;border-radius:7px;padding:10px 14px;
+  background:var(--blue);color:white;font-weight:bold;font-size:13px;
+}
+.btn:hover {opacity:.88}
+.btn.green-btn {background:var(--green)}
+.btn.grey-btn {background:#e9eef8;color:var(--navy)}
+.btn.red-btn {background:#dc3545}
+.btn.small {padding:7px 9px;font-size:12px}
+.quick-actions {display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.quick-actions button {padding:15px 7px;line-height:1.5}
+.table-wrap {overflow-x:auto}
+table {width:100%;border-collapse:collapse;min-width:690px}
+th {background:#f3f6fc;color:#4d5b76;font-size:12px;text-align:left}
+td,th {padding:13px 12px;border-bottom:1px solid var(--border);font-size:13px}
+td {background:white}
+.pill {display:inline-block;border-radius:20px;padding:5px 9px;font-size:11px;background:#d9f8e9;color:#087c50}
+.pill.orange-pill {background:#fff0d5;color:#a56800}
+.pill.blue-pill {background:#e1ebff;color:#245bd3}
+.filters {display:flex;flex-wrap:wrap;gap:10px;margin-bottom:15px}
+.filters input,.filters select,.field input,.field select,.field textarea {
+  border:1px solid #dbe3ef;border-radius:7px;padding:11px;
+  width:100%;background:white;color:var(--text);
+}
+.filters input,.filters select {width:auto;min-width:160px}
+.page {display:none}
+.page.active {display:block}
+.chart-bars {display:flex;align-items:flex-end;gap:17px;height:175px;padding:15px 10px 0;border-bottom:1px solid var(--border)}
+.bar-wrap {flex:1;text-align:center;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:8px}
+.bar {width:min(52px,80%);background:#3677fa;border-radius:6px 6px 0 0;min-height:5px}
+.bar-label {font-size:12px;color:var(--muted);padding:8px 0}
+.stream-list {display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.stream-tag {background:#e9efff;color:#2358bf;padding:8px 11px;border-radius:7px;font-size:12px}
+.notice {padding:13px;background:#f5f8ff;border-radius:8px;margin-bottom:10px;font-size:13px}
+.form-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.field label {display:block;font-size:13px;margin-bottom:7px;font-weight:bold}
+.field.full {grid-column:1/-1}
+.form-actions {display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.empty {text-align:center;padding:35px;color:var(--muted)}
+#toast {
+  position:fixed;bottom:20px;right:20px;background:#14284b;color:white;
+  padding:13px 18px;border-radius:8px;display:none;z-index:20;
+  max-width:90vw;font-size:14px;
+}
+.mobile-menu {display:none}
+footer {padding:22px;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:1050px) {
+  .sidebar {width:210px}
+  .stats {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2 {grid-template-columns:1fr}
+}
+@media(max-width:700px) {
+  .sidebar {display:none;position:fixed;top:0;bottom:0;left:0;z-index:10;width:250px;overflow:auto}
+  .sidebar.open {display:block}
+  .mobile-menu {display:inline-block;border:0;background:var(--blue);color:white;padding:9px 12px;border-radius:7px}
+  .topbar {padding:0 12px;height:60px}
+  .search {width:100%;min-width:0}
+  .top-right {display:none}
+  .content {padding:13px}
+  .welcome {padding:17px;align-items:flex-start;flex-direction:column}
+  .welcome h1 {font-size:21px}
+  .stats {gap:10px}
+  .card {padding:14px}
+  .stat-value {font-size:23px}
+  .quick-actions {grid-template-columns:repeat(2,1fr)}
+  .form-grid {grid-template-columns:1fr}
+  .field.full {grid-column:auto}
+}
 </style>
 </head>
+
 <body>
-<div id="loginView" class="login-wrap">
-  <form class="login-card" id="loginForm">
-    <div class="login-mark">🏫</div><h1>My School System</h1><p>School administrator sign in</p>
-    <div id="loginMessage" class="notice hidden"></div>
-    <div class="field"><label for="loginEmail">Email address</label><input id="loginEmail" type="email" autocomplete="username" required placeholder="admin@school.com"></div>
-    <div class="field"><label for="loginPassword">Password</label><input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter password"></div>
-    <button type="submit" id="loginButton">Sign in</button>
-    <div class="footer-note">Sign in with an account already created in Supabase Authentication. This page does not create or approve accounts.</div>
-  </form>
-</div>
-<div id="appView" class="app hidden">
-  <header class="topbar">
-    <div class="brand"><div class="logo">🏫</div><div><h1>My School System</h1><p id="schoolLabel">School Administration</p></div></div>
-    <div class="top-actions"><span id="signedInLabel" class="status-line"></span><button class="ghost" id="refreshBtn">↻ Refresh</button><button class="ghost" id="logoutBtn">Sign out</button></div>
-  </header>
-  <div class="layout">
-    <aside>
-      <div class="nav-label">SCHOOL WORKSPACE</div>
-      <nav class="nav" id="mainNav">
-        <button class="active" data-page="overview"><span class="ico">▦</span>Overview</button>
-        <button data-page="students"><span class="ico">👨‍🎓</span>Students</button>
-        <button data-page="classes"><span class="ico">🏷️</span>Classes & streams</button>
-        <button data-page="records"><span class="ico">📁</span>Student records</button>
-        <button data-page="exams"><span class="ico">📝</span>Exams & marks</button>
-        <button data-page="teachers"><span class="ico">👩‍🏫</span>Teachers</button>
-        <button data-page="reports"><span class="ico">📊</span>Reports</button>
-        <button data-page="settings"><span class="ico">⚙️</span>Settings & help</button>
-      </nav>
-      <div class="side-note"><strong>Safe editing</strong><br>Use Edit to change a record. Delete actions ask for confirmation. Keep a database backup before making bulk changes.</div>
-    </aside>
-    <main class="main">
-      <div id="globalMessage" class="notice hidden"></div>
-      <section id="page-overview" class="page">
-        <div class="page-head"><div><h2>School overview</h2><p>Quick access to everyday school activities and records.</p></div><div class="head-actions"><button id="addStudentTop">＋ Add student</button><button class="secondary" id="addRecordTop">＋ Add record</button></div></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">🎓 My School System
+      <small>School Administration Panel</small>
+    </div>
+
+    <div class="nav-title">MAIN MENU</div>
+    <button class="nav active" data-page="dashboard">🏠 Dashboard</button>
+    <button class="nav" data-page="students">👨‍🎓 Students</button>
+    <button class="nav" data-page="teachers">👩‍🏫 Teachers</button>
+    <button class="nav" data-page="classes">🏫 Classes & Streams</button>
+    <button class="nav" data-page="exams">📝 Examinations & Marks</button>
+    <button class="nav" data-page="attendance">📅 Attendance</button>
+    <button class="nav" data-page="fees">💰 Fees & Finance</button>
+    <button class="nav" data-page="parents">👪 Parents & Guardians</button>
+    <button class="nav" data-page="reports">📊 Reports & Printing</button>
+    <button class="nav" data-page="records">📁 School Records</button>
+    <div class="nav-title">SYSTEM</div>
+    <button class="nav" data-page="settings">⚙️ Settings</button>
+
+    <div class="sidebar-footer">
+      Better Education<br>Brighter Future
+      <hr style="border-color:#30446a">
+      My School System v2.0
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="mobile-menu" onclick="toggleMenu()">☰</button>
+      <input id="globalSearch" class="search"
+        placeholder="Search students, admission numbers..."
+        oninput="globalSearch(this.value)">
+      <div class="top-right">🔔 &nbsp; Administrator</div>
+    </header>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+        <div class="welcome">
+          <div>
+            <h1>Welcome, School Administrator!</h1>
+            <p>Manage students, teachers, classes, examinations and school activities.</p>
+          </div>
+          <div class="status">● Dashboard ready</div>
+        </div>
+
         <div class="stats">
-          <div class="stat"><div class="label">Registered students</div><div class="value" id="statStudents">—</div><div class="sub">In this school</div></div>
-          <div class="stat"><div class="label">Classes / grades</div><div class="value" id="statClasses">—</div><div class="sub">Class groups configured</div></div>
-          <div class="stat"><div class="label">Streams</div><div class="value" id="statStreams">—</div><div class="sub">Across all classes</div></div>
-          <div class="stat"><div class="label">Saved records</div><div class="value" id="statRecords">—</div><div class="sub">Student records and exam entries</div></div>
+          <div class="card">
+            <div class="stat-icon blue">👨‍🎓</div>
+            <div class="stat-label">Total Students</div>
+            <div class="stat-value" id="totalStudents">0</div>
+            <button class="btn small" onclick="showPage('students')">View students</button>
+          </div>
+          <div class="card">
+            <div class="stat-icon green">👩‍🏫</div>
+            <div class="stat-label">Total Teachers</div>
+            <div class="stat-value" id="totalTeachers">0</div>
+            <button class="btn green-btn small" onclick="showPage('teachers')">View teachers</button>
+          </div>
+          <div class="card">
+            <div class="stat-icon orange">🏫</div>
+            <div class="stat-label">Classes / Grades</div>
+            <div class="stat-value" id="totalClasses">0</div>
+            <button class="btn small" onclick="showPage('classes')">Manage classes</button>
+          </div>
+          <div class="card">
+            <div class="stat-icon purple">📚</div>
+            <div class="stat-label">Streams</div>
+            <div class="stat-value" id="totalStreams">0</div>
+            <button class="btn small" onclick="showPage('classes')">Manage streams</button>
+          </div>
         </div>
+
         <div class="grid2">
-          <button class="quick" data-goto="students"><strong>👨‍🎓 Find or register a student</strong><span>Search by name, admission number, class, stream or gender. View and edit student details.</span></button>
-          <button class="quick" data-goto="classes"><strong>🏷️ Organise classes and streams</strong><span>Create a grade/class first, then add multiple streams such as East, West, A or B.</span></button>
-          <button class="quick" data-goto="records"><strong>📁 View school records</strong><span>Find attendance, fees, discipline, health notes and other records stored for students.</span></button>
-          <button class="quick" data-goto="exams"><strong>📝 Exams and marks</strong><span>Set up an exam and record marks. Teacher workflow and assignment controls can be added alongside this.</span></button>
+          <div class="card">
+            <div class="section-head"><h2>Student Enrolment</h2></div>
+            <div class="chart-bars" id="enrolmentChart"></div>
+            <p style="color:var(--muted);font-size:12px">Students grouped by class.</p>
+          </div>
+          <div class="card">
+            <div class="section-head"><h2>Quick Actions</h2></div>
+            <div class="quick-actions">
+              <button class="btn" onclick="openStudentForm()">＋ Register Student</button>
+              <button class="btn green-btn" onclick="openTeacherForm()">＋ Add Teacher</button>
+              <button class="btn" onclick="showPage('classes')">＋ Add Class / Stream</button>
+              <button class="btn" onclick="showPage('exams')">📝 Enter Marks</button>
+              <button class="btn" onclick="showPage('attendance')">📅 Attendance</button>
+              <button class="btn" onclick="showPage('reports')">📊 View Reports</button>
+            </div>
+          </div>
         </div>
-        <div class="panel" style="margin-top:16px"><div class="panel-head"><div><h3>Recently registered students</h3><p>Latest student profiles available to this school.</p></div><button class="secondary" data-goto="students">View all</button></div><div id="recentStudents" class="table-wrap"></div></div>
+
+        <div class="card">
+          <div class="section-head">
+            <h2>Recent Students</h2>
+            <button class="btn" onclick="showPage('students')">View all</button>
+          </div>
+          <div class="table-wrap" id="recentStudents"></div>
+        </div>
       </section>
-      <section id="page-students" class="page hidden">
-        <div class="page-head"><div><h2>Students</h2><p>Search, view, register, update or remove student profiles.</p></div><div class="head-actions"><button id="addStudentBtn">＋ Register student</button><button class="secondary" id="exportStudentsBtn">Export CSV</button></div></div>
-        <div class="panel">
+
+      <!-- STUDENTS -->
+      <section class="page" id="page-students">
+        <div class="section-head">
+          <h2>Student Management</h2>
+          <button class="btn" onclick="openStudentForm()">＋ Register Student</button>
+        </div>
+        <div class="card">
           <div class="filters">
-            <div class="field search"><label>Search students</label><input id="studentSearch" placeholder="Name, admission no., phone, guardian…"></div>
-            <div class="field"><label>Class / grade</label><select id="studentClassFilter"><option value="">All classes</option></select></div>
-            <div class="field"><label>Stream</label><select id="studentStreamFilter"><option value="">All streams</option></select></div>
-            <div class="field"><label>Gender</label><select id="studentGenderFilter"><option value="">All genders</option><option>Female</option><option>Male</option><option>Other</option></select></div>
+            <input id="studentSearch" placeholder="Search name or admission no."
+              oninput="renderStudents()">
+            <select id="classFilter" onchange="renderStudents()">
+              <option value="">All classes</option>
+            </select>
+            <button class="btn grey-btn" onclick="exportStudents()">Export CSV</button>
           </div>
-          <div id="studentTable" class="table-wrap"></div>
+          <div class="table-wrap" id="studentsTable"></div>
         </div>
       </section>
-      <section id="page-classes" class="page hidden">
-        <div class="page-head"><div><h2>Classes and streams</h2><p>A grade/class can have several streams. Create the class, then attach any number of streams.</p></div></div>
+
+      <!-- STUDENT FORM -->
+      <section class="page" id="page-student-form">
+        <div class="section-head"><h2>Register / Edit Student</h2></div>
+        <div class="card">
+          <form id="studentForm">
+            <input type="hidden" id="editStudentId">
+            <div class="form-grid">
+              <div class="field"><label>Admission Number *</label><input id="admission" required></div>
+              <div class="field"><label>Full Name *</label><input id="studentName" required></div>
+              <div class="field"><label>Gender</label>
+                <select id="gender"><option value="">Select gender</option><option>Male</option><option>Female</option></select>
+              </div>
+              <div class="field"><label>Date of Birth</label><input id="dob" type="date"></div>
+              <div class="field"><label>Class / Grade *</label><select id="studentClass" required></select></div>
+              <div class="field"><label>Stream</label><select id="studentStream"><option value="">Select stream</option></select></div>
+              <div class="field"><label>Parent / Guardian</label><input id="guardian"></div>
+              <div class="field"><label>Guardian Phone</label><input id="guardianPhone" type="tel"></div>
+              <div class="field"><label>Student Phone</label><input id="studentPhone" type="tel"></div>
+              <div class="field"><label>Status</label><select id="studentStatus"><option>Active</option><option>Transferred</option><option>Inactive</option></select></div>
+            </div>
+            <div class="form-actions">
+              <button class="btn" type="submit">Save Student</button>
+              <button class="btn grey-btn" type="button" onclick="showPage('students')">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- TEACHERS -->
+      <section class="page" id="page-teachers">
+        <div class="section-head">
+          <h2>Teacher Management</h2>
+          <button class="btn" onclick="openTeacherForm()">＋ Add Teacher</button>
+        </div>
+        <div class="card">
+          <div class="table-wrap" id="teachersTable"></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-teacher-form">
+        <div class="section-head"><h2>Add Teacher</h2></div>
+        <div class="card">
+          <form id="teacherForm">
+            <div class="form-grid">
+              <div class="field"><label>Full Name *</label><input id="teacherName" required></div>
+              <div class="field"><label>Email</label><input id="teacherEmail" type="email"></div>
+              <div class="field"><label>Phone</label><input id="teacherPhone" type="tel"></div>
+              <div class="field"><label>Subject</label><input id="teacherSubject" placeholder="e.g. Mathematics"></div>
+              <div class="field"><label>Class</label><select id="teacherClass"></select></div>
+              <div class="field"><label>Stream</label><select id="teacherStream"><option value="">Select stream</option></select></div>
+            </div>
+            <div class="form-actions">
+              <button class="btn" type="submit">Save Teacher</button>
+              <button class="btn grey-btn" type="button" onclick="showPage('teachers')">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- CLASSES AND STREAMS -->
+      <section class="page" id="page-classes">
+        <div class="section-head"><h2>Classes & Multiple Streams</h2></div>
         <div class="grid2">
-          <div class="panel"><div class="panel-head"><div><h3>Classes / grades</h3><p>For example: Grade 4, Grade 5, Form 1.</p></div></div>
-            <form id="classForm" class="filters"><div class="field" style="flex:1"><label>Class / grade name</label><input id="classNameInput" required placeholder="e.g. Grade 4"></div><div class="field"><label>Level (optional)</label><input id="classLevelInput" placeholder="e.g. 4"></div><button type="submit">Add class</button></form>
-            <div id="classTable" class="table-wrap"></div>
+          <div class="card">
+            <h2 style="font-size:17px">Add Class / Grade</h2>
+            <form id="classForm">
+              <div class="field"><label>Class / Grade Name *</label><input id="className" placeholder="e.g. Grade 4" required></div>
+              <div class="form-actions"><button class="btn">Add Class</button></div>
+            </form>
           </div>
-          <div class="panel"><div class="panel-head"><div><h3>Streams</h3><p>Streams belong to a class. A class can have many streams.</p></div></div>
-            <form id="streamForm" class="filters"><div class="field" style="flex:1"><label>Class / grade</label><select id="streamClassSelect" required></select></div><div class="field" style="flex:1"><label>Stream name</label><input id="streamNameInput" required placeholder="e.g. East, A, Blue"></div><button type="submit">Add stream</button></form>
-            <div id="streamTable" class="table-wrap"></div>
+          <div class="card">
+            <h2 style="font-size:17px">Add Stream to a Class</h2>
+            <form id="streamForm">
+              <div class="field"><label>Select Class *</label><select id="streamClass" required></select></div>
+              <div class="field" style="margin-top:12px"><label>Stream Name *</label><input id="streamName" placeholder="e.g. East, West, A, B" required></div>
+              <div class="form-actions"><button class="btn green-btn">Add Stream</button></div>
+            </form>
           </div>
         </div>
-        <div class="notice info">Students should be assigned both a class/grade and a stream where applicable. Existing student profiles are not automatically moved; edit the student to update their class or stream.</div>
+        <div class="card">
+          <div class="section-head"><h2>Class and Stream List</h2></div>
+          <div id="classesList"></div>
+        </div>
       </section>
-      <section id="page-records" class="page hidden">
-        <div class="page-head"><div><h2>Student records</h2><p>Search and manage related records linked to students.</p></div><div class="head-actions"><button id="addRecordBtn">＋ Add student record</button><button class="secondary" id="exportRecordsBtn">Export CSV</button></div></div>
-        <div class="panel"><div class="filters"><div class="field search"><label>Search records</label><input id="recordSearch" placeholder="Student, admission no., record title or type…"></div><div class="field"><label>Record type</label><select id="recordTypeFilter"><option value="">All types</option><option>attendance</option><option>fees</option><option>discipline</option><option>health</option><option>parent_contact</option><option>note</option><option>other</option></select></div></div><div id="recordsTable" class="table-wrap"></div></div>
+
+      <!-- EXAMS -->
+      <section class="page" id="page-exams">
+        <div class="section-head"><h2>Examinations & Marks</h2></div>
+        <div class="card">
+          <form id="examForm">
+            <div class="form-grid">
+              <div class="field"><label>Exam Name *</label><input id="examName" placeholder="End of Term 1" required></div>
+              <div class="field"><label>Class *</label><select id="examClass" required></select></div>
+              <div class="field"><label>Stream</label><select id="examStream"><option value="">All streams</option></select></div>
+              <div class="field"><label>Subject *</label><input id="examSubject" placeholder="Mathematics" required></div>
+              <div class="field"><label>Student *</label><select id="examStudent" required></select></div>
+              <div class="field"><label>Marks Scored *</label><input id="marksScored" type="number" min="0" required></div>
+              <div class="field"><label>Maximum Marks</label><input id="marksMax" type="number" min="1" value="100" required></div>
+            </div>
+            <div class="form-actions"><button class="btn">Save Mark</button></div>
+          </form>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <div class="section-head"><h2>Marks Register</h2></div>
+          <div class="table-wrap" id="marksTable"></div>
+        </div>
       </section>
-      <section id="page-exams" class="page hidden">
-        <div class="page-head"><div><h2>Exams and marks</h2><p>Create examinations, record student marks and review saved entries.</p></div><div class="head-actions"><button id="addExamBtn">＋ Create exam</button><button class="secondary" id="addMarkBtn">＋ Enter marks</button></div></div>
-        <div class="panel"><div class="panel-head"><div><h3>Examinations</h3><p>Exams are stored separately from individual student marks.</p></div></div><div id="examsTable" class="table-wrap"></div></div>
-        <div class="panel"><div class="panel-head"><div><h3>Marks register</h3><p>Use a student, exam, subject, marks scored and maximum marks.</p></div><button class="secondary" id="exportMarksBtn">Export CSV</button></div><div class="filters"><div class="field search"><label>Search marks</label><input id="marksSearch" placeholder="Student, exam or subject…"></div></div><div id="marksTable" class="table-wrap"></div></div>
-        <div class="notice info">This basic administrator marks register uses the new MSYS tables in the SQL file below. Teacher accounts and subject/class assignments need authenticated teacher profiles and explicit assignment permissions before teacher entry is enabled.</div>
+
+      <!-- ATTENDANCE -->
+      <section class="page" id="page-attendance">
+        <div class="section-head"><h2>Student Attendance</h2></div>
+        <div class="card">
+          <form id="attendanceForm">
+            <div class="form-grid">
+              <div class="field"><label>Date</label><input id="attendanceDate" type="date" required></div>
+              <div class="field"><label>Class</label><select id="attendanceClass" required></select></div>
+              <div class="field"><label>Stream</label><select id="attendanceStream"><option value="">All streams</option></select></div>
+            </div>
+            <div class="form-actions"><button class="btn">Load Students</button></div>
+          </form>
+          <div id="attendanceList" style="margin-top:20px"></div>
+        </div>
       </section>
-      <section id="page-teachers" class="page hidden">
-        <div class="page-head"><div><h2>Teachers</h2><p>Teacher records and account status.</p></div><button id="addTeacherBtn">＋ Add teacher record</button></div>
-        <div class="panel"><div class="notice info">This section manages teacher directory records. Supabase Authentication registration, account approval and subject/class assignment should be secured using database policies; do not store plain-text passwords in a table.</div><div id="teachersTable" class="table-wrap"></div></div>
+
+      <!-- FEES -->
+      <section class="page" id="page-fees">
+        <div class="section-head"><h2>Fees & Finance</h2></div>
+        <div class="card">
+          <form id="feeForm">
+            <div class="form-grid">
+              <div class="field"><label>Student *</label><select id="feeStudent" required></select></div>
+              <div class="field"><label>Amount (KSh) *</label><input id="feeAmount" type="number" min="1" required></div>
+              <div class="field"><label>Payment Method</label><select id="feeMethod"><option>Cash</option><option>M-Pesa</option><option>Bank</option><option>Other</option></select></div>
+              <div class="field"><label>Reference Number</label><input id="feeReference"></div>
+            </div>
+            <div class="form-actions"><button class="btn">Record Payment</button></div>
+          </form>
+        </div>
+        <div class="card" style="margin-top:18px">
+          <div class="section-head"><h2>Recorded Payments</h2></div>
+          <div class="table-wrap" id="feesTable"></div>
+        </div>
       </section>
-      <section id="page-reports" class="page hidden">
-        <div class="page-head"><div><h2>Reports</h2><p>Quick summaries of student records and examination performance.</p></div><div class="head-actions"><button class="secondary" id="printReportsBtn">Print page</button></div></div>
-        <div class="stats"><div class="stat"><div class="label">Male students</div><div class="value" id="reportMale">—</div></div><div class="stat"><div class="label">Female students</div><div class="value" id="reportFemale">—</div></div><div class="stat"><div class="label">Students with marks</div><div class="value" id="reportMarked">—</div></div><div class="stat"><div class="label">Average marks %</div><div class="value" id="reportAverage">—</div></div></div>
-        <div class="panel"><div class="panel-head"><div><h3>Students by class and stream</h3><p>Counts update from the current student directory.</p></div><button class="secondary" id="exportClassSummary">Export CSV</button></div><div id="classSummaryTable" class="table-wrap"></div></div>
-        <div class="panel"><div class="panel-head"><div><h3>Subject performance</h3><p>Based on marks stored in the new marks register.</p></div></div><div id="subjectSummaryTable" class="table-wrap"></div></div>
+
+      <!-- PARENTS -->
+      <section class="page" id="page-parents">
+        <div class="section-head"><h2>Parents & Guardians</h2></div>
+        <div class="card">
+          <p style="color:var(--muted)">Guardian information comes from the student records.</p>
+          <div class="table-wrap" id="parentsTable"></div>
+        </div>
       </section>
-      <section id="page-settings" class="page hidden">
-        <div class="page-head"><div><h2>Settings and help</h2><p>Connection details, data safety and common setup checks.</p></div></div>
-        <div class="panel"><h3>Current connection</h3><p class="muted">Supabase URL: <strong id="connectionUrl"></strong></p><p class="muted">Signed-in account: <strong id="connectionUser"></strong></p><p class="muted">School ID: <strong id="connectionSchool"></strong></p><div id="connectionStatus" class="notice info">Checking database connection…</div><button id="testConnectionBtn" class="secondary">Test connection</button></div>
-        <div class="panel"><h3>Important notes</h3><ul><li>Run the supplied SQL in Supabase SQL Editor before using Classes & streams, Exams & marks, or Teacher directory.</li><li>Back up your database before changing existing student fields.</li><li>Use Supabase Auth; never store passwords in the school tables.</li><li>RLS policies must be tested with separate school accounts before real student data is entered.</li><li>This page uses your existing <code>msys_students</code>, <code>msys_schools</code>, <code>msys_user_profiles</code> and <code>msys_student_records</code> tables. Student field names can differ between installations; see the compatibility note below if loading students fails.</li></ul></div>
+
+      <!-- REPORTS -->
+      <section class="page" id="page-reports">
+        <div class="section-head"><h2>Reports & Printing</h2></div>
+        <div class="grid2">
+          <div class="card">
+            <h3>Student Enrolment Report</h3>
+            <p>View students grouped by class and stream.</p>
+            <button class="btn" onclick="renderReport()">Generate Report</button>
+          </div>
+          <div class="card">
+            <h3>Print Report</h3>
+            <p>Print the report currently displayed in this section.</p>
+            <button class="btn green-btn" onclick="window.print()">Print</button>
+          </div>
+        </div>
+        <div class="card" id="reportOutput">
+          <p style="color:var(--muted)">Choose Generate Report to view the enrolment summary.</p>
+        </div>
       </section>
-    </main>
-  </div>
+
+      <!-- RECORDS -->
+      <section class="page" id="page-records">
+        <div class="section-head"><h2>School Records</h2></div>
+        <div class="card">
+          <div class="notice">Keep school records accurate and restrict access to authorized staff.</div>
+          <h3>Available Records</h3>
+          <p>Students: <strong id="recordStudentCount">0</strong></p>
+          <p>Teachers: <strong id="recordTeacherCount">0</strong></p>
+          <p>Examination marks: <strong id="recordMarksCount">0</strong></p>
+          <p>Fee payments: <strong id="recordFeesCount">0</strong></p>
+          <button class="btn" onclick="exportStudents()">Export Student List</button>
+        </div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="section-head"><h2>School Settings</h2></div>
+        <div class="card">
+          <form id="settingsForm">
+            <div class="form-grid">
+              <div class="field"><label>School Name</label><input id="schoolName" value="My School"></div>
+              <div class="field"><label>School Code</label><input id="schoolCode" placeholder="School registration code"></div>
+              <div class="field"><label>School Phone</label><input id="schoolPhone"></div>
+              <div class="field"><label>School Email</label><input id="schoolEmail" type="email"></div>
+            </div>
+            <div class="form-actions"><button class="btn">Save Settings</button></div>
+          </form>
+          <div class="notice" style="margin-top:18px">
+            Supabase connection is not configured in this demonstration. Do not enter passwords or secret keys here.
+          </div>
+        </div>
+      </section>
+
+    </div>
+    <footer>My School System · School Administration · Manage your school efficiently</footer>
+  </main>
 </div>
-<div id="modalRoot" class="hidden"></div>
+<div id="toast"></div>
+
 <script>
-(() => {
-'use strict';
-const SUPABASE_URL = 'https://ksidteqtztpfgirfumdz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_uI1GpE80MIvV73I62Jnx0w_lIOWv3bs';
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-const $ = id => document.getElementById(id);
-const state = { user:null, profile:null, schoolId:null, schoolName:'School Administration', students:[], classes:[], streams:[], records:[], exams:[], marks:[], teachers:[], page:'overview' };
-const TABLES = { students:'msys_students', profiles:'msys_user_profiles', schools:'msys_schools', records:'msys_student_records', classes:'msys_classes', streams:'msys_streams', exams:'msys_exams', marks:'msys_exam_marks', teachers:'msys_teacher_directory' };
-function esc(v){return String(v ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function norm(v){return String(v??'').trim();}
-function first(obj, keys, fallback=''){for(const k of keys){if(obj && obj[k]!==undefined && obj[k]!==null && obj[k]!=='') return obj[k];}return fallback;}
-function studentName(s){return norm(first(s,['full_name','student_name','name'])) || [first(s,['first_name','firstname']),first(s,['middle_name']),first(s,['last_name','surname','lastname'])].filter(Boolean).join(' ') || 'Unnamed student';}
-function studentAdmission(s){return norm(first(s,['admission_number','admission_no','adm_no','student_number','registration_number'],'—'));}
-function studentClass(s){return norm(first(s,['class_name','grade','class','class_grade'],'—'));}
-function studentStream(s){return norm(first(s,['stream_name','stream'],'—'));}
-function studentGender(s){return norm(first(s,['gender','sex'],'—'));}
-function notify(message,type='info'){const el=$('globalMessage');el.className='notice '+type;el.textContent=message;el.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>el.classList.add('hidden'),6500);}
-function loginNotice(message,type='error'){const el=$('loginMessage');el.className='notice '+type;el.textContent=message;el.classList.remove('hidden');}
-function showPage(page){state.page=page;document.querySelectorAll('.page').forEach(el=>el.classList.add('hidden'));$('page-'+page).classList.remove('hidden');document.querySelectorAll('#mainNav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));if(page==='reports')renderReports();if(page==='students')renderStudents();if(page==='records')renderRecords();if(page==='classes')renderClasses();if(page==='exams')renderExams();if(page==='teachers')renderTeachers();}
-function tableEmpty(message){return `<div class="empty">${esc(message)}</div>`;}
-function makeTable(headers,rows,empty='No records found'){if(!rows.length)return tableEmpty(empty);return `<table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;}
-function studentOptions(selected=''){return `<option value="">Select student</option>`+state.students.map(s=>`<option value="${esc(s.id)}" ${String(s.id)===String(selected)?'selected':''}>${esc(studentAdmission(s))} — ${esc(studentName(s))}</option>`).join('');}
-function classOptions(selected=''){return `<option value="">Select class / grade</option>`+state.classes.map(c=>`<option value="${esc(c.id)}" ${String(c.id)===String(selected)?'selected':''}>${esc(c.name)}</option>`).join('');}
-function streamOptions(selected='',classId=''){return `<option value="">Select stream (optional)</option>`+state.streams.filter(s=>!classId||String(s.class_id)===String(classId)).map(s=>`<option value="${esc(s.id)}" ${String(s.id)===String(selected)?'selected':''}>${esc((state.classes.find(c=>String(c.id)===String(s.class_id))||{}).name||'Class')} — ${esc(s.name)}</option>`).join('');}
-async function loadProfile(user){const {data,error}=await client.from(TABLES.profiles).select('*').eq('id',user.id).maybeSingle();if(error)throw new Error('Could not read msys_user_profiles: '+error.message);if(!data)throw new Error('Your Supabase login has no row in msys_user_profiles. Ask the system developer to link this auth user to a school profile.');state.profile=data;state.schoolId=first(data,['school_id','schoolid']);if(!state.schoolId)throw new Error('Your user profile has no school_id. Add/assign the school before continuing.');state.schoolName=first(data,['school_name','school'], 'School Administration');try{const {data:school}=await client.from(TABLES.schools).select('*').eq('id',state.schoolId).maybeSingle();if(school)state.schoolName=first(school,['name','school_name','official_name'],state.schoolName);}catch(e){}}
-async function loadStudents(){const {data,error}=await client.from(TABLES.students).select('*').eq('school_id',state.schoolId).limit(5000);if(error)throw new Error('Could not load msys_students: '+error.message);state.students=data||[];}
-async function loadSimple(table,order='created_at'){const {data,error}=await client.from(table).select('*').eq('school_id',state.schoolId).order(order,{ascending:false}).limit(5000);if(error){if(error.code==='42P01'||error.message.toLowerCase().includes('does not exist'))return [];throw new Error(`Could not load ${table}: ${error.message}`);}return data||[];}
-async function loadAll(){await loadStudents();state.classes=await loadSimple(TABLES.classes,'name');state.streams=await loadSimple(TABLES.streams,'name');state.records=await loadSimple(TABLES.records,'record_date');state.exams=await loadSimple(TABLES.exams,'exam_date');state.marks=await loadSimple(TABLES.marks,'created_at');state.teachers=await loadSimple(TABLES.teachers,'full_name');renderAll();$('schoolLabel').textContent=state.schoolName;$('signedInLabel').textContent=state.user.email||'Signed in';$('connectionUrl').textContent=SUPABASE_URL;$('connectionUser').textContent=state.user.email||state.user.id;$('connectionSchool').textContent=state.schoolId;}
-function renderAll(){renderOverview();renderStudents();renderClasses();renderRecords();renderExams();renderTeachers();renderReports();}
-function renderOverview(){$('statStudents').textContent=state.students.length;$('statClasses').textContent=state.classes.length;$('statStreams').textContent=state.streams.length;$('statRecords').textContent=state.records.length+state.marks.length;const recent=[...state.students].sort((a,b)=>String(b.created_at||'').localeCompare(String(a.created_at||''))).slice(0,6);$('recentStudents').innerHTML=makeTable(['Admission no.','Student','Class','Stream','Gender','Action'],recent.map(s=>`<tr><td>${esc(studentAdmission(s))}</td><td><span class="person">${esc(studentName(s))}</span></td><td>${esc(studentClass(s))}</td><td>${esc(studentStream(s))}</td><td>${esc(studentGender(s))}</td><td><div class="actions"><button class="secondary" data-edit-student="${esc(s.id)}">Edit</button></div></td></tr>`),'No students registered yet.');}
-function renderStudents(){const q=norm($('studentSearch')?.value).toLowerCase(),cf=$('studentClassFilter')?.value||'',sf=$('studentStreamFilter')?.value||'',gf=$('studentGenderFilter')?.value||'';fillStudentFilters();const list=state.students.filter(s=>{const hay=[studentName(s),studentAdmission(s),studentClass(s),studentStream(s),studentGender(s),first(s,['phone','parent_phone','guardian_phone']),first(s,['guardian_name','parent_name'])].join(' ').toLowerCase();return (!q||hay.includes(q))&&(!cf||studentClass(s)===cf||String(first(s,['class_id']))===cf)&&(!sf||studentStream(s)===sf||String(first(s,['stream_id']))===sf)&&(!gf||studentGender(s).toLowerCase()===gf.toLowerCase());});$('studentTable').innerHTML=makeTable(['Admission no.','Student name','Class / grade','Stream','Gender','Phone','Actions'],list.map(s=>`<tr><td>${esc(studentAdmission(s))}</td><td><span class="person">${esc(studentName(s))}</span><br><span class="muted small">${esc(first(s,['email']))}</span></td><td>${esc(studentClass(s))}</td><td>${esc(studentStream(s))}</td><td>${esc(studentGender(s))}</td><td>${esc(first(s,['phone','parent_phone'],'—'))}</td><td><div class="actions"><button class="secondary" data-view-student="${esc(s.id)}">View</button><button data-edit-student="${esc(s.id)}">Edit</button><button class="danger" data-delete-student="${esc(s.id)}">Delete</button></div></td></tr>`), 'No students match these filters.');}
-function fillStudentFilters(){const cf=$('studentClassFilter'),sf=$('studentStreamFilter');if(!cf||!sf)return;const cv=cf.value,sv=sf.value;const classVals=[...new Set([...state.classes.map(c=>c.name),...state.students.map(studentClass).filter(v=>v!=='—')])];cf.innerHTML='<option value="">All classes</option>'+classVals.map(v=>`<option ${v===cv?'selected':''}>${esc(v)}</option>`).join('');const streamVals=[...new Set([...state.streams.map(s=>s.name),...state.students.map(studentStream).filter(v=>v!=='—')])];sf.innerHTML='<option value="">All streams</option>'+streamVals.map(v=>`<option ${v===sv?'selected':''}>${esc(v)}</option>`).join('');}
-function renderClasses(){$('classTable').innerHTML=makeTable(['Class / grade','Level','Streams','Students','Actions'],state.classes.map(c=>{const count=state.students.filter(s=>studentClass(s)===c.name||String(first(s,['class_id']))===String(c.id)).length;const sc=state.streams.filter(s=>String(s.class_id)===String(c.id)).length;return `<tr><td><strong>${esc(c.name)}</strong></td><td>${esc(c.level||'—')}</td><td>${sc}</td><td>${count}</td><td><div class="actions"><button class="secondary" data-edit-class="${esc(c.id)}">Edit</button><button class="danger" data-delete-class="${esc(c.id)}">Delete</button></div></td></tr>`;}));$('streamTable').innerHTML=makeTable(['Stream','Class / grade','Students','Actions'],state.streams.map(s=>{const c=state.classes.find(c=>String(c.id)===String(s.class_id));const count=state.students.filter(st=>studentStream(st)===s.name&&(!c||studentClass(st)===c.name)).length;return `<tr><td><strong>${esc(s.name)}</strong></td><td>${esc(c?.name||'Class not found')}</td><td>${count}</td><td><div class="actions"><button class="secondary" data-edit-stream="${esc(s.id)}">Edit</button><button class="danger" data-delete-stream="${esc(s.id)}">Delete</button></div></td></tr>`;}));$('streamClassSelect').innerHTML=classOptions();$('studentClassFilter').innerHTML='<option value="">All classes</option>'+[...new Set([...state.classes.map(c=>c.name),...state.students.map(studentClass).filter(v=>v!=='—')])].map(v=>`<option>${esc(v)}</option>`).join('');}
-function recordStudent(r){return state.students.find(s=>String(s.id)===String(r.student_id));}
-function renderRecords(){const q=norm($('recordSearch')?.value).toLowerCase(),type=$('recordTypeFilter')?.value||'';const rows=state.records.filter(r=>{const s=recordStudent(r);return (!type||r.record_type===type)&&(!q||[r.title,r.record_type,studentName(s||{}),studentAdmission(s||{}),JSON.stringify(r.data||{})].join(' ').toLowerCase().includes(q));});$('recordsTable').innerHTML=makeTable(['Date','Student','Record type','Title','Details','Actions'],rows.map(r=>{const s=recordStudent(r);return `<tr><td>${esc(r.record_date||'—')}</td><td>${esc(s?studentName(s):'Unlinked student')}</td><td><span class="pill">${esc(r.record_type)}</span></td><td>${esc(r.title)}</td><td>${esc(JSON.stringify(r.data||{}).slice(0,100))}</td><td><div class="actions"><button class="secondary" data-edit-record="${esc(r.id)}">Edit</button><button class="danger" data-delete-record="${esc(r.id)}">Delete</button></div></td></tr>`;}));}
-function renderExams(){$('examsTable').innerHTML=makeTable(['Exam','Term','Date','Academic year','Marks saved','Actions'],state.exams.map(e=>`<tr><td><strong>${esc(e.name)}</strong></td><td>${esc(e.term||'—')}</td><td>${esc(e.exam_date||'—')}</td><td>${esc(e.academic_year||'—')}</td><td>${state.marks.filter(m=>String(m.exam_id)===String(e.id)).length}</td><td><div class="actions"><button class="secondary" data-edit-exam="${esc(e.id)}">Edit</button><button class="danger" data-delete-exam="${esc(e.id)}">Delete</button></div></td></tr>`));const q=norm($('marksSearch')?.value).toLowerCase();const rows=state.marks.filter(m=>{const s=recordStudent(m);const e=state.exams.find(e=>String(e.id)===String(m.exam_id));return !q||[studentName(s||{}),studentAdmission(s||{}),e?.name,m.subject].join(' ').toLowerCase().includes(q);});$('marksTable').innerHTML=makeTable(['Student','Admission no.','Exam','Subject','Score','Out of','Percent','Actions'],rows.map(m=>{const s=recordStudent(m),e=state.exams.find(e=>String(e.id)===String(m.exam_id));const pct=Number(m.out_of)>0?Number(m.marks_scored)/Number(m.out_of)*100:0;return `<tr><td>${esc(s?studentName(s):'Student missing')}</td><td>${esc(studentAdmission(s||{}))}</td><td>${esc(e?.name||'Exam missing')}</td><td>${esc(m.subject)}</td><td>${esc(m.marks_scored)}</td><td>${esc(m.out_of)}</td><td>${pct.toFixed(1)}%</td><td><div class="actions"><button class="secondary" data-edit-mark="${esc(m.id)}">Edit</button><button class="danger" data-delete-mark="${esc(m.id)}">Delete</button></div></td></tr>`;}));}
-function renderTeachers(){$('teachersTable').innerHTML=makeTable(['Teacher','Phone','Email','Subjects','Status','Actions'],state.teachers.map(t=>`<tr><td><strong>${esc(t.full_name)}</strong></td><td>${esc(t.phone||'—')}</td><td>${esc(t.email||'—')}</td><td>${esc(t.subjects||'—')}</td><td><span class="pill ${t.status==='approved'?'green':t.status==='rejected'?'red':'amber'}">${esc(t.status||'pending')}</span></td><td><div class="actions"><button class="secondary" data-edit-teacher="${esc(t.id)}">Edit</button><button class="danger" data-delete-teacher="${esc(t.id)}">Delete</button></div></td></tr>`));}
-function renderReports(){const males=state.students.filter(s=>studentGender(s).toLowerCase()==='male').length,females=state.students.filter(s=>studentGender(s).toLowerCase()==='female').length;const avgs=state.marks.map(m=>Number(m.out_of)>0?Number(m.marks_scored)/Number(m.out_of)*100:null).filter(n=>n!==null&&!Number.isNaN(n));$('reportMale').textContent=males;$('reportFemale').textContent=females;$('reportMarked').textContent=new Set(state.marks.map(m=>m.student_id)).size;$('reportAverage').textContent=avgs.length?(avgs.reduce((a,b)=>a+b,0)/avgs.length).toFixed(1)+'%':'—';const combos={};state.students.forEach(s=>{const key=studentClass(s)+' / '+studentStream(s)+' / '+studentGender(s);combos[key]=(combos[key]||0)+1;});$('classSummaryTable').innerHTML=makeTable(['Class / stream / gender','Students'],Object.entries(combos).sort((a,b)=>a[0].localeCompare(b[0])).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v}</td></tr>`));const subs={};state.marks.forEach(m=>{const k=m.subject||'Unspecified';if(!subs[k])subs[k]={n:0,total:0,out:0,passes:0};subs[k].n++;subs[k].total+=Number(m.marks_scored)||0;subs[k].out+=Number(m.out_of)||0;if(Number(m.out_of)>0&&Number(m.marks_scored)/Number(m.out_of)>=.5)subs[k].passes++;});$('subjectSummaryTable').innerHTML=makeTable(['Subject','Entries','Average %','Pass rate (50%+)'],Object.entries(subs).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${v.n}</td><td>${v.out?(v.total/v.out*100).toFixed(1)+'%':'—'}</td><td>${v.n?(v.passes/v.n*100).toFixed(1)+'%':'—'}</td></tr>`));}
-function modal(title,body,saveText='Save'){return new Promise(resolve=>{const root=$('modalRoot');root.classList.remove('hidden');root.innerHTML=`<div class="modal-backdrop"><div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h3>${esc(title)}</h3><button type="button" class="ghost" id="modalClose">✕</button></div><form id="modalForm">${body}<div class="modal-foot"><button type="button" class="ghost" id="modalCancel">Cancel</button><button type="submit">${esc(saveText)}</button></div></form></div></div>`;const close=value=>{root.classList.add('hidden');root.innerHTML='';resolve(value);};$('modalClose').onclick=()=>close(null);$('modalCancel').onclick=()=>close(null);$('modalForm').onsubmit=e=>{e.preventDefault();const fd=new FormData(e.currentTarget);const out={};for(const [k,v] of fd.entries())out[k]=v;close(out);};root.querySelector('.modal-backdrop').addEventListener('click',e=>{if(e.target.classList.contains('modal-backdrop'))close(null);});});}
-function input(name,label,value='',type='text',required=false,extra=''){return `<div class="field"><label>${esc(label)}</label><input name="${esc(name)}" type="${type}" value="${esc(value)}" ${required?'required':''} ${extra}></div>`;}
-function selectField(name,label,options,value='',required=false){return `<div class="field"><label>${esc(label)}</label><select name="${esc(name)}" ${required?'required':''}>${options.map(o=>`<option value="${esc(o.value)}" ${String(o.value)===String(value)?'selected':''}>${esc(o.label)}</option>`).join('')}</select></div>`;}
-async function saveStudent(s=null){const body=`<div class="modal-grid">${input('admission_number','Admission number',s?studentAdmission(s)==='—'?'':studentAdmission(s):'', 'text',true)}${input('full_name','Full student name',s?studentName(s)==='Unnamed student'?'':studentName(s):'', 'text',true)}${input('first_name','First name',s?.first_name||'')}${input('last_name','Last name / surname',s?.last_name||s?.surname||'')}${selectField('gender','Gender',[{value:'',label:'Select gender'},{value:'Female',label:'Female'},{value:'Male',label:'Male'},{value:'Other',label:'Other'}],studentGender(s||{})==='—'?'':studentGender(s||{}))}${input('date_of_birth','Date of birth',s?.date_of_birth||'','date')}${input('phone','Phone number',s?.phone||'','tel')}${input('email','Email',s?.email||'','email')}${input('guardian_name','Parent / guardian',s?.guardian_name||s?.parent_name||'')}${input('guardian_phone','Guardian phone',s?.guardian_phone||s?.parent_phone||'','tel')}${selectField('class_name','Class / grade',[{value:'',label:'Select class / grade'},...state.classes.map(c=>({value:c.name,label:c.name}))],studentClass(s||{})==='—'?'':studentClass(s||{}))}${selectField('stream_name','Stream',[{value:'',label:'Select stream'},...state.streams.map(st=>({value:st.name,label:(state.classes.find(c=>String(c.id)===String(st.class_id))?.name||'')+' — '+st.name}))],studentStream(s||{})==='—'?'':studentStream(s||{}))}${selectField('status','Status',[{value:'active',label:'Active'},{value:'inactive',label:'Inactive'},{value:'transferred',label:'Transferred'}],s?.status||'active')}${`<div class="field wide"><label>Address / additional notes</label><textarea name="notes" rows="2">${esc(s?.notes||s?.address||'')}</textarea></div>`}</div>`;
-const data=await modal(s?'Edit student':'Register student',body,s?'Save changes':'Register student');if(!data)return;
-const payload={school_id:state.schoolId,admission_number:norm(data.admission_number),full_name:norm(data.full_name),first_name:norm(data.first_name)||null,last_name:norm(data.last_name)||null,gender:data.gender||null,date_of_birth:data.date_of_birth||null,phone:norm(data.phone)||null,email:norm(data.email)||null,guardian_name:norm(data.guardian_name)||null,guardian_phone:norm(data.guardian_phone)||null,class_name:data.class_name||null,stream_name:data.stream_name||null,status:data.status||'active',notes:norm(data.notes)||null};
-if(s){const existing={...s,...payload};const {error}=await client.from(TABLES.students).update(existing).eq('id',s.id).eq('school_id',state.schoolId);if(error){notify('Student update failed: '+error.message+' — your existing student table may use different column names.', 'error');return;}}
-else{const {error}=await client.from(TABLES.students).insert(payload);if(error){notify('Student registration failed: '+error.message+' — check your msys_students columns in Supabase.', 'error');return;}}
-await refreshData();notify(s?'Student updated.':'Student registered.','success');}
-async function deleteRow(table,id,label){if(!confirm(`Delete this ${label}? This cannot be undone.`))return;const {error}=await client.from(table).delete().eq('id',id).eq('school_id',state.schoolId);if(error){notify(`Could not delete ${label}: ${error.message}`,'error');return;}await refreshData();notify(`${label} deleted.`,'success');}
-async function saveClass(c=null){const d=await modal(c?'Edit class / grade':'Add class / grade',`<div class="modal-grid">${input('name','Class / grade name',c?.name||'', 'text',true)}${input('level','Level / year (optional)',c?.level||'')}</div>`);if(!d)return;const payload={school_id:state.schoolId,name:norm(d.name),level:norm(d.level)||null};const res=c?await client.from(TABLES.classes).update(payload).eq('id',c.id).eq('school_id',state.schoolId):await client.from(TABLES.classes).insert(payload);if(res.error){notify('Could not save class: '+res.error.message,'error');return;}await refreshData();notify('Class saved.','success');}
-async function saveStream(st=null){const d=await modal(st?'Edit stream':'Add stream',`<div class="modal-grid">${selectField('class_id','Class / grade',state.classes.map(c=>({value:c.id,label:c.name})),st?.class_id||'',true)}${input('name','Stream name',st?.name||'','text',true)}</div>`);if(!d)return;const payload={school_id:state.schoolId,class_id:d.class_id,name:norm(d.name)};const res=st?await client.from(TABLES.streams).update(payload).eq('id',st.id).eq('school_id',state.schoolId):await client.from(TABLES.streams).insert(payload);if(res.error){notify('Could not save stream: '+res.error.message,'error');return;}await refreshData();notify('Stream saved.','success');}
-async function saveRecord(r=null){const s=recordStudent(r);const d=await modal(r?'Edit student record':'Add student record',`<div class="modal-grid">${selectField('student_id','Student',state.students.map(st=>({value:st.id,label:studentAdmission(st)+' — '+studentName(st)})),r?.student_id||'',true)}${selectField('record_type','Record type',['attendance','fees','discipline','health','parent_contact','note','other'].map(v=>({value:v,label:v.replace('_',' ')})),r?.record_type||'note',true)}${input('title','Record title',r?.title||'','text',true)}${input('record_date','Record date',r?.record_date||new Date().toISOString().slice(0,10),'date',true)}<div class="field wide"><label>Details (plain text or JSON)</label><textarea name="details" rows="4">${esc(typeof r?.data==='object'?JSON.stringify(r.data,null,2):r?.data||'')}</textarea></div></div>`);if(!d)return;let recordData={};try{recordData=JSON.parse(d.details||'{}');}catch{recordData={notes:d.details||''};}const payload={school_id:state.schoolId,student_id:d.student_id,record_type:d.record_type,title:norm(d.title),record_date:d.record_date,data:recordData,created_by:state.user.id};const res=r?await client.from(TABLES.records).update(payload).eq('id',r.id).eq('school_id',state.schoolId):await client.from(TABLES.records).insert(payload);if(res.error){notify('Could not save record: '+res.error.message,'error');return;}await refreshData();notify('Student record saved.','success');}
-async function saveExam(e=null){const d=await modal(e?'Edit examination':'Create examination',`<div class="modal-grid">${input('name','Examination name',e?.name||'','text',true)}${input('term','Term / semester',e?.term||'')}${input('exam_date','Exam date',e?.exam_date||new Date().toISOString().slice(0,10),'date')}${input('academic_year','Academic year',e?.academic_year||String(new Date().getFullYear()))}${input('notes','Notes',e?.notes||'')}</div>`);if(!d)return;const payload={school_id:state.schoolId,name:norm(d.name),term:norm(d.term)||null,exam_date:d.exam_date||null,academic_year:norm(d.academic_year)||null,notes:norm(d.notes)||null,created_by:state.user.id};const res=e?await client.from(TABLES.exams).update(payload).eq('id',e.id).eq('school_id',state.schoolId):await client.from(TABLES.exams).insert(payload);if(res.error){notify('Could not save examination: '+res.error.message,'error');return;}await refreshData();notify('Examination saved.','success');}
-async function saveMark(m=null){const d=await modal(m?'Edit mark':'Enter student mark',`<div class="modal-grid">${selectField('student_id','Student',state.students.map(st=>({value:st.id,label:studentAdmission(st)+' — '+studentName(st)})),m?.student_id||'',true)}${selectField('exam_id','Examination',state.exams.map(e=>({value:e.id,label:e.name+(e.term?' — '+e.term:'')})),m?.exam_id||'',true)}${input('subject','Subject',m?.subject||'','text',true)}${input('marks_scored','Marks scored',m?.marks_scored??'','number',true,'min="0" step="0.01"')}${input('out_of','Maximum marks',m?.out_of??100,'number',true,'min="0.01" step="0.01"')}${input('notes','Notes',m?.notes||'')}</div>`);if(!d)return;const scored=Number(d.marks_scored),out=Number(d.out_of);if(!Number.isFinite(scored)||!Number.isFinite(out)||out<=0||scored<0||scored>out){notify('Marks must be between zero and the maximum marks.','error');return;}const payload={school_id:state.schoolId,student_id:d.student_id,exam_id:d.exam_id,subject:norm(d.subject),marks_scored:scored,out_of:out,notes:norm(d.notes)||null,entered_by:state.user.id};const res=m?await client.from(TABLES.marks).update(payload).eq('id',m.id).eq('school_id',state.schoolId):await client.from(TABLES.marks).insert(payload);if(res.error){notify('Could not save mark: '+res.error.message,'error');return;}await refreshData();notify('Mark saved.','success');}
-async function saveTeacher(t=null){const d=await modal(t?'Edit teacher record':'Add teacher record',`<div class="modal-grid">${input('full_name','Teacher full name',t?.full_name||'','text',true)}${input('phone','Phone number',t?.phone||'','tel')}${input('email','Email',t?.email||'','email')}${input('subjects','Subjects taught',t?.subjects||'','text')}${selectField('status','Status',[{value:'pending',label:'Pending'},{value:'approved',label:'Approved'},{value:'suspended',label:'Suspended'},{value:'rejected',label:'Rejected'}],t?.status||'pending',true)}</div>`);if(!d)return;const payload={school_id:state.schoolId,full_name:norm(d.full_name),phone:norm(d.phone)||null,email:norm(d.email)||null,subjects:norm(d.subjects)||null,status:d.status};const res=t?await client.from(TABLES.teachers).update(payload).eq('id',t.id).eq('school_id',state.schoolId):await client.from(TABLES.teachers).insert(payload);if(res.error){notify('Could not save teacher: '+res.error.message,'error');return;}await refreshData();notify('Teacher record saved.','success');}
-async function refreshData(){await loadAll();}
-function downloadCSV(filename,rows){if(!rows.length){notify('There is no data to export.','info');return;}const csv=rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);}
-function exportStudents(){downloadCSV('students.csv',[['Admission no.','Name','Class','Stream','Gender','Phone','Email','Guardian'],...state.students.map(s=>[studentAdmission(s),studentName(s),studentClass(s),studentStream(s),studentGender(s),first(s,['phone','parent_phone']),s.email,first(s,['guardian_name','parent_name'])])]);}
-function exportRecords(){downloadCSV('student-records.csv',[['Date','Student','Admission','Type','Title','Details'],...state.records.map(r=>{const s=recordStudent(r);return [r.record_date,studentName(s||{}),studentAdmission(s||{}),r.record_type,r.title,JSON.stringify(r.data||{})];})]);}
-function exportMarks(){downloadCSV('exam-marks.csv',[['Student','Admission','Exam','Subject','Marks','Out of','Percentage'],...state.marks.map(m=>{const s=recordStudent(m),e=state.exams.find(e=>String(e.id)===String(m.exam_id));return [studentName(s||{}),studentAdmission(s||{}),e?.name,m.subject,m.marks_scored,m.out_of,Number(m.out_of)?(Number(m.marks_scored)/Number(m.out_of)*100).toFixed(2):''];})]);}
-function exportClassSummary(){const combos={};state.students.forEach(s=>{const k=studentClass(s)+' / '+studentStream(s)+' / '+studentGender(s);combos[k]=(combos[k]||0)+1;});downloadCSV('class-stream-summary.csv',[['Class / stream / gender','Students'],...Object.entries(combos).map(([k,v])=>[k,v])]);}
-async function testConnection(){const el=$('connectionStatus');el.className='notice info';el.textContent='Testing Supabase access…';try{const {error}=await client.from(TABLES.students).select('id',{head:true,count:'exact'}).eq('school_id',state.schoolId);if(error)throw error;el.className='notice success';el.textContent='Connection works and the student table is accessible for this school.';}catch(e){el.className='notice error';el.textContent='Connection test failed: '+e.message;}}
-document.addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;try{
-if(b.dataset.page)showPage(b.dataset.page);if(b.dataset.goto)showPage(b.dataset.goto);
-if(b.id==='addStudentBtn'||b.id==='addStudentTop')await saveStudent();
-if(b.id==='addRecordBtn'||b.id==='addRecordTop')await saveRecord();
-if(b.id==='addExamBtn')await saveExam();if(b.id==='addMarkBtn')await saveMark();if(b.id==='addTeacherBtn')await saveTeacher();
-if(b.id==='refreshBtn')await refreshData();if(b.id==='exportStudentsBtn')exportStudents();if(b.id==='exportRecordsBtn')exportRecords();if(b.id==='exportMarksBtn')exportMarks();if(b.id==='exportClassSummary')exportClassSummary();if(b.id==='printReportsBtn')window.print();if(b.id==='testConnectionBtn')await testConnection();
-if(b.dataset.editStudent){const s=state.students.find(x=>String(x.id)===b.dataset.editStudent);if(s)await saveStudent(s);}
-if(b.dataset.viewStudent){const s=state.students.find(x=>String(x.id)===b.dataset.viewStudent);if(s)alert(['Name: '+studentName(s),'Admission: '+studentAdmission(s),'Class: '+studentClass(s),'Stream: '+studentStream(s),'Gender: '+studentGender(s),'Phone: '+first(s,['phone'],'—'),'Email: '+first(s,['email'],'—'),'Guardian: '+first(s,['guardian_name','parent_name'],'—')].join('\n'));}
-if(b.dataset.deleteStudent)await deleteRow(TABLES.students,b.dataset.deleteStudent,'student');
-if(b.dataset.editClass){const c=state.classes.find(x=>String(x.id)===b.dataset.editClass);if(c)await saveClass(c);}
-if(b.dataset.deleteClass)await deleteRow(TABLES.classes,b.dataset.deleteClass,'class');
-if(b.dataset.editStream){const s=state.streams.find(x=>String(x.id)===b.dataset.editStream);if(s)await saveStream(s);}
-if(b.dataset.deleteStream)await deleteRow(TABLES.streams,b.dataset.deleteStream,'stream');
-if(b.dataset.editRecord){const r=state.records.find(x=>String(x.id)===b.dataset.editRecord);if(r)await saveRecord(r);}
-if(b.dataset.deleteRecord)await deleteRow(TABLES.records,b.dataset.deleteRecord,'student record');
-if(b.dataset.editExam){const x=state.exams.find(x=>String(x.id)===b.dataset.editExam);if(x)await saveExam(x);}
-if(b.dataset.deleteExam)await deleteRow(TABLES.exams,b.dataset.deleteExam,'exam');
-if(b.dataset.editMark){const x=state.marks.find(x=>String(x.id)===b.dataset.editMark);if(x)await saveMark(x);}
-if(b.dataset.deleteMark)await deleteRow(TABLES.marks,b.dataset.deleteMark,'mark');
-if(b.dataset.editTeacher){const x=state.teachers.find(x=>String(x.id)===b.dataset.editTeacher);if(x)await saveTeacher(x);}
-if(b.dataset.deleteTeacher)await deleteRow(TABLES.teachers,b.dataset.deleteTeacher,'teacher record');
-}catch(err){notify(err.message||String(err),'error');}});
-$('loginForm').addEventListener('submit',async e=>{e.preventDefault();$('loginButton').disabled=true;$('loginButton').textContent='Signing in…';try{const {data,error}=await client.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPassword').value});if(error)throw error;state.user=data.user;await loadProfile(state.user);$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadAll();}catch(err){loginNotice(err.message||'Sign-in failed.');}finally{$('loginButton').disabled=false;$('loginButton').textContent='Sign in';}});
-$('logoutBtn').addEventListener('click',async()=>{await client.auth.signOut();location.reload();});
-['studentSearch','studentClassFilter','studentStreamFilter','studentGenderFilter'].forEach(id=>$(id).addEventListener('input',renderStudents));
-['recordSearch','recordTypeFilter'].forEach(id=>$(id).addEventListener('input',renderRecords));$('marksSearch').addEventListener('input',renderExams);
-$('classForm').addEventListener('submit',async e=>{e.preventDefault();try{await saveClassFromQuick();}catch(err){notify(err.message,'error');}});
-async function saveClassFromQuick(){const name=norm($('classNameInput').value),level=norm($('classLevelInput').value);if(!name)return;const {error}=await client.from(TABLES.classes).insert({school_id:state.schoolId,name,level:level||null});if(error){notify('Could not add class: '+error.message,'error');return;} $('classNameInput').value='';$('classLevelInput').value='';await refreshData();notify('Class added.','success');}
-$('streamForm').addEventListener('submit',async e=>{e.preventDefault();try{const class_id=$('streamClassSelect').value,name=norm($('streamNameInput').value);if(!class_id||!name)return;const {error}=await client.from(TABLES.streams).insert({school_id:state.schoolId,class_id,name});if(error)throw error;$('streamNameInput').value='';await refreshData();notify('Stream added.','success');}catch(err){notify('Could not add stream: '+err.message,'error');}});
-async function init(){try{const {data}=await client.auth.getSession();if(data.session){state.user=data.session.user;await loadProfile(state.user);$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');await loadAll();}}catch(err){loginNotice(err.message||'Could not restore your session.');}}
-init();
-})();
+/*
+ DEMONSTRATION VERSION
+ Data is held in browser memory only.
+ Refreshing the page clears changes.
+ Connect Supabase and enforce permissions before using real records.
+*/
+
+let students = [];
+let teachers = [];
+let classes = [];
+let marks = [];
+let fees = [];
+let attendance = [];
+let streams = {};
+let nextStudentId = 1;
+
+function toast(message) {
+  const el = document.getElementById("toast");
+  el.textContent = message;
+  el.style.display = "block";
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => el.style.display = "none", 3000);
+}
+
+function toggleMenu() {
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  const page = document.getElementById("page-" + name);
+  if (page) page.classList.add("active");
+
+  document.querySelectorAll(".nav").forEach(b => b.classList.remove("active"));
+  const nav = document.querySelector('.nav[data-page="' + name + '"]');
+  if (nav) nav.classList.add("active");
+
+  document.getElementById("sidebar").classList.remove("open");
+  refreshAll();
+}
+
+document.querySelectorAll(".nav[data-page]").forEach(button => {
+  button.addEventListener("click", () => showPage(button.dataset.page));
+});
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+  })[ch]);
+}
+
+function optionHTML(value, label) {
+  return '<option value="' + escapeHTML(value) + '">' + escapeHTML(label) + '</option>';
+}
+
+function fillSelect(id, values, placeholder) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const old = el.value;
+  el.innerHTML = optionHTML("", placeholder || "Select") +
+    values.map(v => optionHTML(v, v)).join("");
+  if (values.includes(old)) el.value = old;
+}
+
+function refreshSelectors() {
+  fillSelect("classFilter", classes, "All classes");
+  fillSelect("studentClass", classes, "Select class");
+  fillSelect("teacherClass", classes, "Select class");
+  fillSelect("streamClass", classes, "Select class");
+  fillSelect("examClass", classes, "Select class");
+  fillSelect("attendanceClass", classes, "Select class");
+
+  const studentOptions = students.map(s => s.admission + " — " + s.name);
+  ["examStudent", "feeStudent"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const old = el.value;
+    el.innerHTML = optionHTML("", "Select student") +
+      students.map(s => optionHTML(s.id, s.admission + " — " + s.name)).join("");
+    if (students.some(s => String(s.id) === old)) el.value = old;
+  });
+
+  ["studentStream","teacherStream","examStream","attendanceStream"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const old = el.value;
+    const cls = id === "studentStream" ?
+      document.getElementById("studentClass").value :
+      id === "teacherStream" ?
+      document.getElementById("teacherClass").value :
+      id === "examStream" ?
+      document.getElementById("examClass").value :
+      document.getElementById("attendanceClass").value;
+
+    const list = streams[cls] || [];
+    el.innerHTML = optionHTML("", "Select stream") +
+      list.map(s => optionHTML(s, s)).join("");
+    if (list.includes(old)) el.value = old;
+  });
+}
+
+function refreshAll() {
+  refreshSelectors();
+  renderStudents();
+  renderTeachers();
+  renderClasses();
+  renderMarks();
+  renderFees();
+  renderParents();
+  renderDashboard();
+  renderRecords();
+}
+
+function renderDashboard() {
+  document.getElementById("totalStudents").textContent = students.length;
+  document.getElementById("totalTeachers").textContent = teachers.length;
+  document.getElementById("totalClasses").textContent = classes.length;
+  document.getElementById("totalStreams").textContent =
+    Object.values(streams).reduce((n, list) => n + list.length, 0);
+
+  const counts = classes.map(c => ({
+    name:c, count:students.filter(s => s.className === c).length
+  }));
+  const max = Math.max(1, ...counts.map(x => x.count));
+  document.getElementById("enrolmentChart").innerHTML = counts.length ?
+    counts.map(x => '<div class="bar-wrap"><strong>' + x.count +
+      '</strong><div class="bar" style="height:' +
+      Math.max(5, x.count / max * 115) + 'px"></div><div class="bar-label">' +
+      escapeHTML(x.name) + '</div></div>').join("") :
+    '<div class="empty">Add classes and students to see enrolment.</div>';
+
+  document.getElementById("recentStudents").innerHTML =
+    studentTable(students.slice(-5).reverse(), false);
+}
+
+function studentTable(list, actions) {
+  if (!list.length) return '<div class="empty">No students found.</div>';
+  return '<table><thead><tr><th>Admission No.</th><th>Student Name</th><th>Class</th><th>Stream</th><th>Gender</th><th>Status</th>' +
+    (actions ? '<th>Actions</th>' : '') +
+    '</tr></thead><tbody>' +
+    list.map(s => '<tr><td>' + escapeHTML(s.admission) +
+      '</td><td>' + escapeHTML(s.name) +
+      '</td><td>' + escapeHTML(s.className) +
+      '</td><td>' + escapeHTML(s.stream || "—") +
+      '</td><td>' + escapeHTML(s.gender || "—") +
+      '</td><td><span class="pill">' + escapeHTML(s.status) + '</span></td>' +
+      (actions ? '<td><button class="btn small" onclick="editStudent(' + s.id + ')">Edit</button> ' +
+        '<button class="btn red-btn small" onclick="deleteStudent(' + s.id + ')">Delete</button></td>' : '') +
+      '</tr>').join("") + '</tbody></table>';
+}
+
+function renderStudents() {
+  const search = (document.getElementById("studentSearch")?.value || "").toLowerCase();
+  const cls = document.getElementById("classFilter")?.value || "";
+  const list = students.filter(s =>
+    (s.name.toLowerCase().includes(search) || s.admission.toLowerCase().includes(search)) &&
+    (!cls || s.className === cls)
+  );
+  const el = document.getElementById("studentsTable");
+  if (el) el.innerHTML = studentTable(list, true);
+}
+
+function openStudentForm() {
+  document.getElementById("studentForm").reset();
+  document.getElementById("editStudentId").value = "";
+  refreshSelectors();
+  showPage("student-form");
+}
+
+document.getElementById("studentForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const id = Number(document.getElementById("editStudentId").value);
+  const admission = document.getElementById("admission").value.trim();
+  const name = document.getElementById("studentName").value.trim();
+  const className = document.getElementById("studentClass").value;
+  if (!admission || !name || !className) return toast("Enter admission number, name and class.");
+  if (students.some(s => s.admission.toLowerCase() === admission.toLowerCase() && s.id !== id))
+    return toast("That admission number already exists.");
+
+  const student = {
+    id:id || nextStudentId++,
+    admission, name, className,
+    gender:document.getElementById("gender").value,
+    dob:document.getElementById("dob").value,
+    stream:document.getElementById("studentStream").value,
+    guardian:document.getElementById("guardian").value.trim(),
+    guardianPhone:document.getElementById("guardianPhone").value.trim(),
+    phone:document.getElementById("studentPhone").value.trim(),
+    status:document.getElementById("studentStatus").value
+  };
+  if (id) students = students.map(s => s.id === id ? student : s);
+  else students.push(student);
+  toast(id ? "Student updated in this browser session." : "Student registered in this browser session.");
+  showPage("students");
+});
+
+function editStudent(id) {
+  const s = students.find(x => x.id === id);
+  if (!s) return;
+  openStudentForm();
+  document.getElementById("editStudentId").value = s.id;
+  document.getElementById("admission").value = s.admission;
+  document.getElementById("studentName").value = s.name;
+  document.getElementById("gender").value = s.gender;
+  document.getElementById("dob").value = s.dob;
+  document.getElementById("studentClass").value = s.className;
+  refreshSelectors();
+  document.getElementById("studentStream").value = s.stream;
+  document.getElementById("guardian").value = s.guardian;
+  document.getElementById("guardianPhone").value = s.guardianPhone;
+  document.getElementById("studentPhone").value = s.phone;
+  document.getElementById("studentStatus").value = s.status;
+}
+
+function deleteStudent(id) {
+  if (!confirm("Delete this student from the current browser session?")) return;
+  students = students.filter(s => s.id !== id);
+  refreshAll();
+  toast("Student removed from this browser session.");
+}
+
+function openTeacherForm() {
+  document.getElementById("teacherForm").reset();
+  refreshSelectors();
+  showPage("teacher-form");
+}
+
+document.getElementById("teacherForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const name = document.getElementById("teacherName").value.trim();
+  if (!name) return;
+  teachers.push({
+    id:Date.now(), name,
+    email:document.getElementById("teacherEmail").value.trim(),
+    phone:document.getElementById("teacherPhone").value.trim(),
+    subject:document.getElementById("teacherSubject").value.trim(),
+    className:document.getElementById("teacherClass").value,
+    stream:document.getElementById("teacherStream").value
+  });
+  event.target.reset();
+  refreshAll();
+  showPage("teachers");
+  toast("Teacher added in this browser session.");
+});
+
+function renderTeachers() {
+  const el = document.getElementById("teachersTable");
+  if (!el) return;
+  el.innerHTML = teachers.length ? '<table><thead><tr><th>Name</th><th>Subject</th><th>Class</th><th>Stream</th><th>Phone</th><th>Action</th></tr></thead><tbody>' +
+    teachers.map(t => '<tr><td>' + escapeHTML(t.name) + '</td><td>' + escapeHTML(t.subject) +
+      '</td><td>' + escapeHTML(t.className) + '</td><td>' + escapeHTML(t.stream) +
+      '</td><td>' + escapeHTML(t.phone) + '</td><td><button class="btn red-btn small" onclick="deleteTeacher(' + t.id + ')">Remove</button></td></tr>').join("") +
+    '</tbody></table>' : '<div class="empty">No teachers added yet.</div>';
+}
+
+function deleteTeacher(id) {
+  if (!confirm("Remove this teacher from this browser session?")) return;
+  teachers = teachers.filter(t => t.id !== id);
+  refreshAll();
+}
+
+document.getElementById("classForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const name = document.getElementById("className").value.trim();
+  if (!name) return;
+  if (classes.some(c => c.toLowerCase() === name.toLowerCase()))
+    return toast("This class already exists.");
+  classes.push(name);
+  streams[name] = [];
+  event.target.reset();
+  refreshAll();
+  toast("Class added.");
+});
+
+document.getElementById("streamForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const cls = document.getElementById("streamClass").value;
+  const name = document.getElementById("streamName").value.trim();
+  if (!cls || !name) return toast("Choose a class and enter a stream.");
+  streams[cls] = streams[cls] || [];
+  if (streams[cls].some(s => s.toLowerCase() === name.toLowerCase()))
+    return toast("That stream already exists in this class.");
+  streams[cls].push(name);
+  event.target.reset();
+  refreshAll();
+  toast("Stream added to " + cls + ".");
+});
+
+function renderClasses() {
+  const el = document.getElementById("classesList");
+  if (!el) return;
+  el.innerHTML = classes.length ? classes.map(c =>
+    '<div style="border:1px solid var(--border);padding:16px;border-radius:9px;margin-bottom:12px">' +
+    '<strong>' + escapeHTML(c) + '</strong>' +
+    '<div class="stream-list">' +
+    (streams[c] || []).map(s => '<span class="stream-tag">' + escapeHTML(s) + '</span>').join("") +
+    '</div><p style="font-size:12px;color:var(--muted)">Students: ' +
+    students.filter(s => s.className === c).length + '</p></div>'
+  ).join("") : '<div class="empty">No classes yet. Add a class above, then add one or more streams.</div>';
+}
+
+document.getElementById("examForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const student = students.find(s => String(s.id) === document.getElementById("examStudent").value);
+  const scored = Number(document.getElementById("marksScored").value);
+  const max = Number(document.getElementById("marksMax").value);
+  if (!student) return toast("Register or select a student first.");
+  if (max <= 0 || scored < 0 || scored > max) return toast("Check the marks and maximum marks.");
+  marks.push({
+    id:Date.now(), exam:document.getElementById("examName").value.trim(),
+    className:document.getElementById("examClass").value,
+    stream:document.getElementById("examStream").value,
+    subject:document.getElementById("examSubject").value.trim(),
+    studentId:student.id, studentName:student.name,
+    scored, max
+  });
+  renderMarks();
+  renderRecords();
+  toast("Mark recorded in this browser session.");
+});
+
+function renderMarks() {
+  const el = document.getElementById("marksTable");
+  if (!el) return;
+  el.innerHTML = marks.length ? '<table><thead><tr><th>Exam</th><th>Student</th><th>Class</th><th>Subject</th><th>Score</th><th>Percentage</th></tr></thead><tbody>' +
+    marks.map(m => '<tr><td>' + escapeHTML(m.exam) + '</td><td>' + escapeHTML(m.studentName) +
+      '</td><td>' + escapeHTML(m.className) + '</td><td>' + escapeHTML(m.subject) +
+      '</td><td>' + m.scored + '/' + m.max + '</td><td>' + (m.scored / m.max * 100).toFixed(1) + '%</td></tr>').join("") +
+    '</tbody></table>' : '<div class="empty">No marks recorded yet.</div>';
+}
+
+document.getElementById("attendanceDate").value = new Date().toISOString().slice(0,10);
+document.getElementById("attendanceForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const cls = document.getElementById("attendanceClass").value;
+  const stream = document.getElementById("attendanceStream").value;
+  const date = document.getElementById("attendanceDate").value;
+  const list = students.filter(s => s.className === cls && (!stream || s.stream === stream));
+  const el = document.getElementById("attendanceList");
+  if (!list.length) {
+    el.innerHTML = '<div class="empty">No students found in this class and stream.</div>';
+    return;
+  }
+  el.innerHTML = '<form id="dailyAttendance"><h3>' + escapeHTML(cls) +
+    (stream ? " — " + escapeHTML(stream) : "") + '</h3>' +
+    list.map(s => '<div style="padding:10px;border-bottom:1px solid var(--border)">' +
+      '<label><input type="checkbox" name="present" value="' + s.id + '" checked> ' +
+      escapeHTML(s.admission + " — " + s.name) + '</label></div>').join("") +
+    '<button class="btn" style="margin-top:15px">Save Attendance</button></form>';
+  document.getElementById("dailyAttendance").addEventListener("submit", e => {
+    e.preventDefault();
+    const present = [...e.target.querySelectorAll('input[name="present"]:checked')].map(x => Number(x.value));
+    attendance = attendance.filter(a => !(a.date === date && a.className === cls && a.stream === stream));
+    list.forEach(s => attendance.push({
+      date, className:cls, stream, studentId:s.id,
+      studentName:s.name, present:present.includes(s.id)
+    }));
+    toast("Attendance recorded in this browser session.");
+    renderRecords();
+  });
+});
+
+document.getElementById("feeForm").addEventListener("submit", event => {
+  event.preventDefault();
+  const student = students.find(s => String(s.id) === document.getElementById("feeStudent").value);
+  const amount = Number(document.getElementById("feeAmount").value);
+  if (!student || amount <= 0) return toast("Select a student and enter a valid amount.");
+  fees.push({
+    id:Date.now(), studentName:student.name, admission:student.admission,
+    amount, method:document.getElementById("feeMethod").value,
+    reference:document.getElementById("feeReference").value.trim(),
+    date:new Date().toLocaleDateString()
+  });
+  event.target.reset();
+  renderFees();
+  renderRecords();
+  toast("Payment recorded in this browser session.");
+});
+
+function renderFees() {
+  const el = document.getElementById("feesTable");
+  if (!el) return;
+  const total = fees.reduce((sum, f) => sum + f.amount, 0);
+  el.innerHTML = '<h3>Total recorded payments: KSh ' + total.toLocaleString() + '</h3>' +
+    (fees.length ? '<table><thead><tr><th>Date</th><th>Student</th><th>Admission</th><th>Amount (KSh)</th><th>Method</th><th>Reference</th></tr></thead><tbody>' +
+    fees.map(f => '<tr><td>' + escapeHTML(f.date) + '</td><td>' + escapeHTML(f.studentName) +
+      '</td><td>' + escapeHTML(f.admission) + '</td><td>' + f.amount.toLocaleString() +
+      '</td><td>' + escapeHTML(f.method) + '</td><td>' + escapeHTML(f.reference) + '</td></tr>').join("") +
+    '</tbody></table>' : '<div class="empty">No payments recorded yet.</div>');
+}
+
+function renderParents() {
+  const el = document.getElementById("parentsTable");
+  if (!el) return;
+  const list = students.filter(s => s.guardian || s.guardianPhone);
+  el.innerHTML = list.length ? '<table><thead><tr><th>Student</th><th>Class</th><th>Guardian</th><th>Phone</th></tr></thead><tbody>' +
+    list.map(s => '<tr><td>' + escapeHTML(s.name) + '</td><td>' + escapeHTML(s.className) +
+      '</td><td>' + escapeHTML(s.guardian) + '</td><td>' + escapeHTML(s.guardianPhone) + '</td></tr>').join("") +
+    '</tbody></table>' : '<div class="empty">Guardian information will appear here when entered in student records.</div>';
+}
+
+function renderReport() {
+  const el = document.getElementById("reportOutput");
+  el.innerHTML = '<h3>Student Enrolment Summary</h3><p>Total students: <strong>' + students.length +
+    '</strong></p><table><thead><tr><th>Class</th><th>Stream</th><th>Students</th></tr></thead><tbody>' +
+    classes.map(c => (streams[c] || ["—"]).map(s => {
+      const count = students.filter(st => st.className === c && (s === "—" || st.stream === s)).length;
+      return '<tr><td>' + escapeHTML(c) + '</td><td>' + escapeHTML(s) + '</td><td>' + count + '</td></tr>';
+    }).join("")).join("") + '</tbody></table>';
+}
+
+function renderRecords() {
+  document.getElementById("recordStudentCount").textContent = students.length;
+  document.getElementById("recordTeacherCount").textContent = teachers.length;
+  document.getElementById("recordMarksCount").textContent = marks.length;
+  document.getElementById("recordFeesCount").textContent = fees.length;
+}
+
+function globalSearch(value) {
+  const input = document.getElementById("studentSearch");
+  if (input) input.value = value;
+  showPage("students");
+  renderStudents();
+}
+
+function exportStudents() {
+  if (!students.length) return toast("There are no students to export.");
+  const headers = ["Admission","Name","Gender","Class","Stream","Guardian","Guardian Phone","Status"];
+  const rows = students.map(s => [
+    s.admission,s.name,s.gender,s.className,s.stream,s.guardian,s.guardianPhone,s.status
+  ]);
+  const csv = [headers,...rows].map(row => row.map(v =>
+    '"' + String(v ?? "").replace(/"/g,'""') + '"'
+  ).join(",")).join("\r\n");
+  const blob = new Blob(["\uFEFF" + csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "school-students.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById("settingsForm").addEventListener("submit", event => {
+  event.preventDefault();
+  toast("Settings updated for this open page only.");
+});
+
+// Refresh stream selectors when the selected class changes.
+["studentClass","teacherClass","examClass","attendanceClass"].forEach(id => {
+  document.getElementById(id).addEventListener("change", refreshSelectors);
+});
+
+refreshAll();
 </script>
 </body>
 </html>
